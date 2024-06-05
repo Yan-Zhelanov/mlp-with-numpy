@@ -1,7 +1,7 @@
 import os
 
 from configs.data_config import DataConfig
-from configs.mlp_config import model_cfg
+from configs.mlp_config import ModelConfig
 
 ROOT_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -36,4 +36,4 @@ class ExperimentConfig(object):
     DATA_NUM_CLASSES = 7
 
     # Model parameters
-    MODEL_CONFIG = model_cfg
+    MODEL_CONFIG = ModelConfig
