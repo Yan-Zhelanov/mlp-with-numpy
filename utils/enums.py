@@ -1,6 +1,27 @@
-from enum import IntEnum, Enum
+from enum import Enum
 
-SetType = IntEnum('SetType', ('train', 'validation', 'test'))
-SamplerType = IntEnum('SamplerType', ('Default', 'Upsampling'))
-TransformsType = IntEnum('TransformsType', ('Resize', 'Normalize', 'Standardize', 'ToFloat'))
-WeightsInitType = IntEnum('WeightsInitType', ('normal', 'uniform', 'he', 'xavier', 'xavier_normalized'))
+
+class SetType(Enum):
+    TRAIN = 1
+    VALIDATION = 2
+    TEST = 3
+
+
+class SamplerType(Enum):
+    DEFAULT = 1
+    UPSAMPLING = 2
+
+
+class TransformsType(Enum):
+    RESIZE = 1
+    NORMALIZE = 2
+    STANDARDIZE = 3
+    TO_FLOAT = 4
+
+
+class WeightsInitType(Enum):
+    NORMAL = 1
+    UNIFORM = 2
+    HE = 3
+    XAVIER = 4
+    XAVIER_NORMALIZED = 5
