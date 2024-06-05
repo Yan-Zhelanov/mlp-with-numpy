@@ -4,13 +4,16 @@ from typing import Union
 
 import cv2
 import numpy as np
+from numpy import typing as npt
 
 from utils.enums import TransformsType
 
 
 class ImageTransform(ABC):
     @abstractmethod
-    def transform(self, image: np.ndarray) -> np.ndarray:
+    def transform(
+        self, image: npt.NDArray[np.integer | np.float_],
+    ) -> npt.NDArray[np.integer | np.float_]:
         """Transform image.
 
         Args:
@@ -30,7 +33,9 @@ class Normalize(ImageTransform):
         self.a = a
         self.b = b
 
-    def transform(self, image: np.ndarray) -> np.ndarray:
+    def transform(
+        self, image: npt.NDArray[np.integer | np.float_],
+    ) -> npt.NDArray[np.integer | np.float_]:
         """
         Args:
             image: np.ndarray, all pixels in [0, 1]
@@ -53,7 +58,9 @@ class Standardize(ImageTransform):
         self.mean = np.array(mean)
         self.std = np.array(std)
 
-    def transform(self, image: np.ndarray) -> np.ndarray:
+    def transform(
+        self, image: npt.NDArray[np.integer | np.float_],
+    ) -> npt.NDArray[np.integer | np.float_]:
         """
         Args:
             image: np.ndarray, all pixels in [0, 1]
@@ -72,7 +79,9 @@ class ToFloat(ImageTransform):
     def __init__(self) -> None:
         pass
 
-    def transform(self, image: np.ndarray) -> np.ndarray:
+    def transform(
+        self, image: npt.NDArray[np.integer | np.float_],
+    ) -> npt.NDArray[np.integer | np.float_]:
         """
         Args:
             image: np.ndarray
@@ -90,7 +99,9 @@ class Resize(ImageTransform):
     def __init__(self, size: Union[int, tuple, list]) -> None:
         self.size = size
 
-    def transform(self, image: np.ndarray) -> np.ndarray:
+    def transform(
+        self, image: npt.NDArray[np.integer | np.float_],
+    ) -> npt.NDArray[np.integer | np.float_]:
         """
         Args:
             image: np.ndarray
@@ -113,7 +124,9 @@ class Sequential(ImageTransform):
             for transform, params in transform_list
         ]
 
-    def transform(self, image: np.ndarray) -> np.ndarray:
+    def transform(
+        self, image: npt.NDArray[np.integer | np.float_],
+    ) -> npt.NDArray[np.integer | np.float_]:
         transformed_image = image.copy()
         for transform in self._transforms:
             transformed_image = transform.transform(transformed_image)
