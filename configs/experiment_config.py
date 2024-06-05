@@ -1,39 +1,39 @@
 import os
 
-from easydict import EasyDict
-
-from configs.data_config import data_config
+from configs.data_config import DataConfig
 from configs.mlp_config import model_cfg
 
 ROOT_DIR = os.path.dirname(os.path.dirname(__file__))
 
-experiment_cfg = EasyDict()
-experiment_cfg.seed = 0
-experiment_cfg.num_epochs = 10
 
-# Train parameters
-experiment_cfg.train = EasyDict()
-experiment_cfg.train.batch_size = 64
-experiment_cfg.train.learning_rate = 5e-2
+class ExperimentConfig(object):
+    SEED = 0
+    NUM_EPOCHS = 10
 
-# Overfit parameters
-experiment_cfg.overfit = EasyDict()
-experiment_cfg.overfit.num_iterations = 500
+    # Train parameters
+    TRAIN_BATCH_SIZE = 64
+    TRAIN_LEARNING_RATE = 5e-2
 
-# Neptune parameters
-experiment_cfg.neptune = EasyDict()
-experiment_cfg.neptune.env_path = os.path.join(ROOT_DIR, '.env')
-experiment_cfg.neptune.project = None
-experiment_cfg.neptune.experiment_name = None
-experiment_cfg.neptune.run_id = None
-experiment_cfg.neptune.dependencies_path = os.path.join(ROOT_DIR, 'requirements.txt')
+    # Overfit parameters
+    OVERFIT_NUM_ITERATIONS = 500
 
-# Checkpoints parameters
-experiment_cfg.checkpoints_dir = os.path.join(ROOT_DIR, 'checkpoints', experiment_cfg.neptune.experiment_name)
+    # Neptune parameters
+    NEPTUNE_ENV_PATH = os.path.join(ROOT_DIR, '.env')
+    NEPTUNE_PROJECT: str | None = None
+    NEPTUNE_EXPERIMENT_NAME: str | None = None
+    NEPTUNE_RUN_ID: str | None = None
+    NEPTUNE_DEPENDENCIES_PATH = os.path.join(ROOT_DIR, 'requirements.txt')
 
-# Data parameters
-experiment_cfg.data = data_config
-experiment_cfg.data.num_classes = 7
+    # Checkpoints parameters
+    CHECKPOINTS_DIR = os.path.join(
+        ROOT_DIR,
+        'checkpoints',
+        NEPTUNE_EXPERIMENT_NAME if NEPTUNE_EXPERIMENT_NAME else '',
+    )
 
-# Model parameters
-experiment_cfg.model = model_cfg
+    # Data parameters
+    DATA_CONFIG = DataConfig
+    DATA_NUM_CLASSES = 7
+
+    # Model parameters
+    MODEL_CONFIG = model_cfg

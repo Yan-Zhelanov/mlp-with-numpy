@@ -1,4 +1,5 @@
 from easydict import EasyDict
+
 from utils.enums import WeightsInitType
 
 model_cfg = EasyDict()
@@ -14,6 +15,6 @@ model_cfg.layers = [
 
 # Weights and bias initialization
 model_cfg.params = EasyDict()
-model_cfg.params.init_type = WeightsInitType.normal
+model_cfg.params.init_type = WeightsInitType.NORMAL
 model_cfg.params.init_kwargs = {'mu': 0, 'sigma': 0.001}
 model_cfg.params.zero_bias = True
