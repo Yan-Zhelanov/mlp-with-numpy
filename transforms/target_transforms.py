@@ -1,18 +1,21 @@
 from abc import ABC, abstractmethod
 
 import numpy as np
+from numpy import typing as npt
+
+TargetsType = npt.NDArray[np.integer | np.floating]
 
 
 class TargetTransform(ABC):
     @abstractmethod
-    def transform(self, targets: np.ndarray) -> np.ndarray:
+    def transform(self, targets: TargetsType) -> TargetsType:
         """Transform targets.
 
         Args:
-            targets (np.ndarray): The input targets to transform.
+            targets (TargetsType): The input targets to transform.
 
         Returns:
-            np.ndarray: Transformed targets.
+            TargetsType: Transformed targets.
         """
 
 
@@ -22,7 +25,7 @@ class OneHotEncoding(TargetTransform):
     def __init__(self, num_classes: int) -> None:
         self._num_classes = num_classes
 
-    def transform(self, targets: np.ndarray) -> np.ndarray:
+    def transform(self, targets: TargetsType) -> TargetsType:
         """
         One-hot encoding vector representation:
             t_i^(k) = 1 if k = t_i otherwise  0,
