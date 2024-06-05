@@ -8,3 +8,4 @@ pyarrow~=15.0.2
 neptune~=1.9.1
 mlflow~=2.11.3
 python-dotenv~=1.0.1
+pre-commit==3.7.1
