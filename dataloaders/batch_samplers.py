@@ -1,35 +1,35 @@
 import numpy as np
-from typing import Union
+
+from dataset.emotions_dataset import EmotionsDataset
 
 
 class BaseSampler(object):
     """Class for sampling dataset indexes."""
 
-    def __init__(self, dataset, shuffle: bool, **kwargs):
-        self.indices = np.arange(len(dataset))
-        self.labels = dataset.labels
+    def __init__(
+        self, dataset: EmotionsDataset, shuffle: bool, **kwargs,
+    ) -> None:
+        self._indices = np.arange(len(dataset))
+        self._labels = dataset.labels
+        self._shuffle = shuffle
 
-        self.shuffle = shuffle
-
-    def _get_indices(self) -> Union[np.ndarray, list]:
+    def _get_indices(self) -> np.ndarray | list:
         raise NotImplementedError
 
     def __iter__(self):
         """Iterating over indices"""
         indices = self._get_indices()
-        if self.shuffle:
+        if self._shuffle:
             indices = np.random.permutation(indices)
         return iter(indices)
 
 
 class DefaultSampler(BaseSampler):
-
     def _get_indices(self):
-        return self.indices
+        return self._indices
 
 
 class UpsamplingSampler(BaseSampler):
-
     def _get_indices(self):
         """Upsampling Minority Class.
 
