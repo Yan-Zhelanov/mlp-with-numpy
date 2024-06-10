@@ -1,8 +1,9 @@
-import numpy as np
 import os
 import pickle
 
-from dataloaders.dataloader import Dataloader
+import numpy as np
+
+from data_loaders.data_loader import DataLoader
 from dataset.emotions_dataset import EmotionsDataset
 from models.mlp import MLP
 from modules.losses.cross_entropy_loss import CrossEntropyLoss
@@ -17,6 +18,7 @@ from utils.metrics import balanced_accuracy_score
 
 class Trainer:
     """A class for model training."""
+
     def __init__(self, config):
         self.config = config
         set_seed(self.config.seed)
@@ -37,19 +39,25 @@ class Trainer:
         one_hot_encoding = OneHotEncoding(data_cfg.num_classes)
 
         self.train_dataset = EmotionsDataset(
-            data_cfg, SetType.train, transforms=train_transforms, target_transforms=one_hot_encoding
+            data_cfg, SetType.train, transforms=train_transforms, target_transforms=one_hot_encoding,
         )
-        self.train_dataloader = Dataloader(self.train_dataset, batch_size, shuffle=True, sampler=data_cfg.sampler_type)
+        self.train_dataloader = DataLoader(
+            self.train_dataset, batch_size, shuffle=True, sampler=data_cfg.sampler_type,
+        )
 
         self.validation_dataset = EmotionsDataset(
-            data_cfg, SetType.validation, transforms=validation_transforms, target_transforms=one_hot_encoding
+            data_cfg, SetType.validation, transforms=validation_transforms, target_transforms=one_hot_encoding,
         )
-        self.validation_dataloader = Dataloader(self.validation_dataset, batch_size=batch_size, shuffle=False)
+        self.validation_dataloader = DataLoader(
+            self.validation_dataset, batch_size=batch_size, shuffle=False,
+        )
 
     def _prepare_model(self):
         """Preparing model, optimizer and loss function."""
         self.model = MLP(self.config.model)
-        self.optimizer = SGD(self.model, learning_rate=self.config.train.learning_rate)
+        self.optimizer = SGD(
+            self.model, learning_rate=self.config.train.learning_rate,
+        )
         self.criterion = CrossEntropyLoss()
 
     def save(self, filepath: str):
@@ -113,7 +121,7 @@ class Trainer:
         #               model parameters should be saved with save() method
         raise NotImplementedError
 
-    def evaluate(self, epoch: int, dataloader: Dataloader, set_type: SetType):
+    def evaluate(self, epoch: int, dataloader: DataLoader, set_type: SetType):
         """Evaluation.
 
         The method is used to make the model performance evaluation on training/validation/test data.
@@ -144,7 +152,11 @@ class Trainer:
         batch = next(iter(self.train_dataloader))
         for _ in range(self.config.overfit.num_iterations):
             loss_value, output = self.make_step(batch, update_model=True)
-            balanced_acc = balanced_accuracy_score(batch['target'], output.argmax(-1))
+            balanced_acc = balanced_accuracy_score(
+                batch['target'], output.argmax(-1),
+            )
 
             self.logger.save_metrics(SetType.train.name, 'loss', loss_value)
-            self.logger.save_metrics(SetType.train.name, 'balanced_acc', balanced_acc)
+            self.logger.save_metrics(
+                SetType.train.name, 'balanced_acc', balanced_acc,
+            )

@@ -3,7 +3,7 @@ from typing import TypedDict
 import numpy as np
 from numpy import typing as npt
 
-from dataloaders import batch_samplers
+from data_loaders import batch_samplers
 from dataset.emotions_dataset import EmotionsDataset
 from utils.enums import SamplerType
 
