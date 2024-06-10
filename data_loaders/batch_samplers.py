@@ -1,4 +1,7 @@
+from typing import Iterator
+
 import numpy as np
+from numpy import typing as npt
 
 from dataset.emotions_dataset import EmotionsDataset
 
@@ -13,10 +16,10 @@ class BaseSampler(object):
         self._labels = dataset.labels
         self._shuffle = shuffle
 
-    def _get_indices(self) -> np.ndarray | list:
+    def _get_indices(self) -> npt.NDArray[np.integer]:
         raise NotImplementedError
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[np.integer]:
         """Iterating over indices"""
         indices = self._get_indices()
         if self._shuffle:
@@ -25,25 +28,33 @@ class BaseSampler(object):
 
 
 class DefaultSampler(BaseSampler):
-    def _get_indices(self):
+    def _get_indices(self) -> npt.NDArray[np.integer]:
         return self._indices
 
 
 class UpsamplingSampler(BaseSampler):
-    def _get_indices(self):
+    def _get_indices(self) -> npt.NDArray[np.integer]:
         """Upsampling Minority Class.
 
-        Upsampling is a technique used to create additional data points of the minority class to balance class labels.
-            This is usually done by duplicating existing samples or creating new ones
+        Upsampling is a technique used to create additional data points of the
+        minority class to balance class labels. This is usually done by
+        duplicating existing samples or creating new ones.
 
-        # TODO:
-            1) For each class get the indices of its elements using self.labels
-            2) Get the maximum number of elements by class
-            3) For each class:
-                - add all indices of the class to the indices-list
-                - if the number of samples is less than the maximum number, randomly sample indices from this class
-                so that the total number of indices equals the maximum number
-            4) Return np.ndarray or list of indexes
+        Returns:
+            npt.NDArray[np.integer]: Indices of the samples.
         """
-        indices = []
-        raise NotImplementedError
+        unique_labels, counts = np.unique(self._labels, return_counts=True)
+        label_indices = {
+            label: np.where(self._labels == label)[0]
+            for label in unique_labels
+        }
+        max_samples = np.max(counts)
+        indices: list[int] = []
+        for label_indices_for_class in label_indices.values():
+            indices.extend(label_indices_for_class)
+            if len(label_indices_for_class) < max_samples:
+                difference = max_samples - len(label_indices_for_class)
+                indices.extend(
+                    np.random.choice(label_indices_for_class, difference),
+                )
+        return np.array(indices)
