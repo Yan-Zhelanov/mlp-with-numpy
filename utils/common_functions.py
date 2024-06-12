@@ -5,7 +5,17 @@ import pandas as pd
 
 
 def read_dataframe_file(path_to_file: str) -> pd.DataFrame:
-    """Reads DataFrame file."""
+    """Read DataFrame file.
+
+    Args:
+        path_to_file (str): The path to the file to read.
+
+    Raises:
+        ValueError: If the file format is not supported.
+
+    Returns:
+        pd.DataFrame: The DataFrame read from the file.
+    """
     if path_to_file.endswith('csv'):
         return pd.read_csv(path_to_file)
     if path_to_file.endswith('pickle'):
@@ -16,28 +26,35 @@ def read_dataframe_file(path_to_file: str) -> pd.DataFrame:
 
 
 def set_seed(seed: int) -> None:
+    """Set the random seed for the 'random' and 'np.random' modules.
+
+    Args:
+        seed (int): The seed value to set for random number generation.
+    """
     random.seed(seed)
     np.random.seed(seed)
 
 
-def convert_lists_and_tuples_to_string(data: dict) -> dict:
+def convert_lists_and_tuples_to_string(converting_input: dict) -> dict:
     """Replace recursively all lists and tuples in a dictionary.
 
     This function replaces all lists and tuples including nested dictionaries
     with a string representation of the list.
 
     Args:
-        data (dict): The dictionary to convert.
+        converting_input (dict): The dictionary to convert.
 
     Returns:
         dict: The converted dictionary.
     """
-    data = data.copy()
-    for key, value in data.items():
-        if isinstance(value, dict):
-            data[key] = convert_lists_and_tuples_to_string(value)
-        elif isinstance(value, list) or isinstance(value, tuple):
-            data[key] = str(value)
-        elif value is None:
-            data[key] = str(value)
-    return data
+    converting_input = converting_input.copy()
+    for key, input_value in converting_input.items():
+        if isinstance(input_value, dict):
+            converting_input[key] = convert_lists_and_tuples_to_string(
+                input_value,
+            )
+        elif isinstance(input_value, (list, tuple)):
+            converting_input[key] = str(input_value)
+        elif input_value is None:
+            converting_input[key] = str(input_value)
+    return converting_input
