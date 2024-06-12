@@ -57,9 +57,9 @@ def get_accuracy_score_per_class(
     return scores
 
 
-def balanced_accuracy_score(
+def get_balanced_accuracy_score(
     targets: TargetsType, predictions: TargetsType,
-) -> float:
+) -> np.floating:
     """Get balanced accuracy score.
 
     The formula is as follows:
@@ -78,8 +78,7 @@ def balanced_accuracy_score(
         targets: true labels
         predictions: predicted class
     """
-    # TODO: Implement computation of balanced accuracy
-    raise NotImplementedError
+    return np.mean(get_accuracy_score_per_class(targets, predictions))
 
 
 def get_confusion_matrix(

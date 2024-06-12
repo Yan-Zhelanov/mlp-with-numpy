@@ -13,7 +13,7 @@ from transforms.target_transforms import OneHotEncoding
 from utils.common_functions import set_seed
 from utils.enums import SetType
 from utils.logger import NeptuneLogger
-from utils.metrics import balanced_accuracy_score
+from utils.metrics import get_balanced_accuracy_score
 
 
 class Trainer:
@@ -152,7 +152,7 @@ class Trainer:
         batch = next(iter(self.train_dataloader))
         for _ in range(self.config.overfit.num_iterations):
             loss_value, output = self.make_step(batch, update_model=True)
-            balanced_acc = balanced_accuracy_score(
+            balanced_acc = get_balanced_accuracy_score(
                 batch['target'], output.argmax(-1),
             )
 
