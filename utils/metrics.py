@@ -1,4 +1,5 @@
 import numpy as np
+from numpy import typing as npt
 
 from constants.types import TargetsType
 
@@ -77,21 +78,25 @@ def balanced_accuracy_score(
     raise NotImplementedError
 
 
-def confusion_matrix(
-    targets: np.ndarray, predictions: np.ndarray,
-) -> np.ndarray:
-    """Confusion matrix.
+def get_confusion_matrix(
+    targets: TargetsType, predictions: TargetsType,
+) -> npt.NDArray[np.float64]:
+    """Get confusion matrix.
 
     Confusion matrix C with shape KxK:
         c[i, j] - number of observations known to be in class i and predicted
         to be in class j,
-
         where:
             - K is the number of classes.
 
     Args:
-        targets: labels
-        predictions: predicted class
+        targets: Labels.
+        predictions: Predicted classes.
+
+    Returns:
+        np.ndarray: Confusion matrix.
     """
-    # TODO: Implement computation of confusion matrix
-    raise NotImplementedError
+    count_classes = len(np.unique(targets))
+    confusion_matrix = np.zeros((count_classes, count_classes))
+    np.add.at(confusion_matrix, (targets.astype(int), predictions), 1)
+    return confusion_matrix
