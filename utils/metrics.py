@@ -28,9 +28,9 @@ def get_accuracy_score(
     return np.mean(targets == predictions)
 
 
-def accuracy_score_per_class(
+def get_accuracy_score_per_class(
     targets: TargetsType, predictions: TargetsType,
-) -> list | np.ndarray | dict:
+) -> npt.NDArray[np.float64]:
     """Accuracy score for each class.
 
     The formula is as follows:
@@ -49,8 +49,12 @@ def accuracy_score_per_class(
     Returns:
         accuracy for each class: list, np.ndarray or dict
     """
-    # TODO: Implement computation of accuracy for each class
-    raise NotImplementedError
+    unique_classes = np.unique(targets)
+    scores = np.zeros(len(unique_classes))
+    for index, unique_class in enumerate(unique_classes):
+        mask = targets == unique_class
+        scores[index] = np.mean(predictions[mask] == unique_class)
+    return scores
 
 
 def balanced_accuracy_score(
