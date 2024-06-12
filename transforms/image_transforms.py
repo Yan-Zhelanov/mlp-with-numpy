@@ -8,12 +8,12 @@ from numpy import typing as npt
 
 from utils.enums import TransformsType
 
+_ImageType = npt.NDArray[np.integer | np.floating]
+
 
 class ImageTransform(ABC):
     @abstractmethod
-    def transform(
-        self, image: npt.NDArray[np.integer | np.float_],
-    ) -> npt.NDArray[np.integer | np.float_]:
+    def transform(self, image: _ImageType) -> _ImageType:
         """Transform image.
 
         Args:
@@ -94,23 +94,22 @@ class ToFloat(ImageTransform):
 
 
 class Resize(ImageTransform):
-    """Image resize"""
+    """Image resize."""
 
-    def __init__(self, size: Union[int, tuple, list]) -> None:
-        self.size = size
+    def __init__(self, size: tuple[int, int]) -> None:
+        self._size = size
 
-    def transform(
-        self, image: npt.NDArray[np.integer | np.float_],
-    ) -> npt.NDArray[np.integer | np.float_]:
-        """
+    def transform(self, image: _ImageType) -> _ImageType:
+        """Transform image by resizing it.
+
         Args:
-            image: np.ndarray
+            image (npt.NDArray[npt.integer | npt.floating]): The input image to
+                transform.
 
         Returns:
-             resized_image (numpy.array)
+            npt.NDArray[npt.floating]: The image in the range [0, 1].
         """
-        # TODO: Implement resizing with cv2.resize
-        raise NotImplementedError
+        return cv2.resize(image, self._size)
 
 
 class Sequential(ImageTransform):
@@ -125,7 +124,7 @@ class Sequential(ImageTransform):
         ]
 
     def transform(
-        self, image: npt.NDArray[np.integer | np.float_],
+        self, image: npt.NDArray[np.float64],
     ) -> npt.NDArray[np.integer | np.float_]:
         transformed_image = image.copy()
         for transform in self._transforms:
