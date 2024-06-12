@@ -1,6 +1,5 @@
 import sys
 from abc import ABC, abstractmethod
-from typing import Union
 
 import cv2
 import numpy as np
@@ -27,28 +26,24 @@ class ImageTransform(ABC):
 
 
 class Normalize(ImageTransform):
-    """Transforms image by scaling each pixel to a range [a, b]"""
+    """Transform image by scaling each pixel to a range [a, b]."""
 
     def __init__(
-        self, a: Union[float, int] = -1, b: Union[float, int] = 1,
+        self, min_value: float | int = -1, max_value: float | int = 1,
     ) -> None:
-        self.a = a
-        self.b = b
+        self._min_value = min_value
+        self._max_value = max_value
 
-    def transform(
-        self, image: npt.NDArray[np.integer | np.float_],
-    ) -> npt.NDArray[np.integer | np.float_]:
-        """
+    def transform(self, image: _ImageType) -> _ImageType:
+        """Transform image by scaling each pixel to a range [a, b].
+
         Args:
             image: np.ndarray, all pixels in [0, 1]
 
         Returns:
              normalized_image (numpy.array)
         """
-        # TODO: implement data normalization
-        #       normalized_image = a + (b - a) * image,
-        #       where a = self.a, b = self.b
-        raise NotImplementedError
+        return self._min_value + (self._max_value - self._min_value) * image
 
 
 class Standardize(ImageTransform):
