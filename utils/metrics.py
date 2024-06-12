@@ -31,7 +31,7 @@ def get_accuracy_score(
 def get_accuracy_score_per_class(
     targets: TargetsType, predictions: TargetsType,
 ) -> npt.NDArray[np.float64]:
-    """Accuracy score for each class.
+    """Get accuracy score for each class.
 
     The formula is as follows:
         accuracy_k = (1 / N_k) Σ(i=0 to N) I(y_i == t_i) * I(t_i == k)
@@ -60,7 +60,7 @@ def get_accuracy_score_per_class(
 def balanced_accuracy_score(
     targets: TargetsType, predictions: TargetsType,
 ) -> float:
-    """Balanced accuracy score.
+    """Get balanced accuracy score.
 
     The formula is as follows:
         balanced_accuracy = (1 / K) Σ(k=0 to K-1) accuracy_k,
