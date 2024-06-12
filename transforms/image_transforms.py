@@ -52,27 +52,24 @@ class Normalize(ImageTransform):
 
 
 class Standardize(ImageTransform):
-    """Standardizes image with mean and std."""
+    """Standardize image with mean and std."""
 
     def __init__(
-        self, mean: Union[float, list, tuple], std: Union[float, list, tuple],
+        self, mean: float | list | tuple, std: float | list | tuple,
     ) -> None:
-        self.mean = np.array(mean)
-        self.std = np.array(std)
+        self._mean = np.array(mean)
+        self._std = np.array(std)
 
-    def transform(
-        self, image: npt.NDArray[np.integer | np.float_],
-    ) -> npt.NDArray[np.integer | np.float_]:
-        """
+    def transform(self, image: _ImageType) -> _ImageType:
+        """Transform image by standardizing it.
+
         Args:
-            image: np.ndarray, all pixels in [0, 1]
+            image: The input image to transform.
 
         Returns:
-             standardized_image (numpy.array)
+            _ImageType: The image in the range [0, 1].
         """
-        # TODO: implement data standardization
-        #       standardized_x = (x - self.mean) / self.std
-        raise NotImplementedError
+        return (image - self._mean) / self._std
 
 
 class ToFloat(ImageTransform):
