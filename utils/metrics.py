@@ -27,7 +27,9 @@ def get_accuracy_score(
     return np.mean(targets == predictions)
 
 
-def accuracy_score_per_class(targets: np.ndarray, predictions: np.ndarray) -> list | np.ndarray | dict:
+def accuracy_score_per_class(
+    targets: TargetsType, predictions: TargetsType,
+) -> list | np.ndarray | dict:
     """Accuracy score for each class.
 
     The formula is as follows:
@@ -50,7 +52,9 @@ def accuracy_score_per_class(targets: np.ndarray, predictions: np.ndarray) -> li
     raise NotImplementedError
 
 
-def balanced_accuracy_score(targets: np.ndarray, predictions: np.ndarray) -> float:
+def balanced_accuracy_score(
+    targets: TargetsType, predictions: TargetsType,
+) -> float:
     """Balanced accuracy score.
 
     The formula is as follows:
@@ -73,11 +77,14 @@ def balanced_accuracy_score(targets: np.ndarray, predictions: np.ndarray) -> flo
     raise NotImplementedError
 
 
-def confusion_matrix(targets: np.ndarray, predictions: np.ndarray) -> np.ndarray:
+def confusion_matrix(
+    targets: np.ndarray, predictions: np.ndarray,
+) -> np.ndarray:
     """Confusion matrix.
 
     Confusion matrix C with shape KxK:
-        c[i, j] - number of observations known to be in class i and predicted to be in class j,
+        c[i, j] - number of observations known to be in class i and predicted
+        to be in class j,
 
         where:
             - K is the number of classes.
