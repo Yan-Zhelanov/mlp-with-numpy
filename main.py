@@ -1,9 +1,8 @@
-from configs.experiment_config import experiment_cfg
+from configs.experiment_config import ExperimentConfig
 from executors.trainer import Trainer
 
-
 if __name__ == '__main__':
-    trainer = Trainer(experiment_cfg)
+    trainer = Trainer(ExperimentConfig())
 
     # one batch overfitting
     trainer.batch_overfit()
