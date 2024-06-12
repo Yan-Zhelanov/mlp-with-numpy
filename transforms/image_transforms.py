@@ -8,6 +8,8 @@ from numpy import typing as npt
 
 from utils.enums import TransformsType
 
+_MAX_VALUE = 255
+
 _ImageType = npt.NDArray[np.integer | np.floating]
 
 
@@ -74,23 +76,21 @@ class Standardize(ImageTransform):
 
 
 class ToFloat(ImageTransform):
-    """Convert image from uint to float and scale it to [0, 1]"""
+    """Convert image from uint to float and scale it to [0, 1]."""
 
     def __init__(self) -> None:
-        pass
+        """Initialize the transform."""
 
-    def transform(
-        self, image: npt.NDArray[np.integer | np.float_],
-    ) -> npt.NDArray[np.integer | np.float_]:
-        """
+    def transform(self, image: _ImageType) -> _ImageType:
+        """Transform image by converting it to float and scaling it to [0, 1].
+
         Args:
             image: np.ndarray
 
         Returns:
-             float_image (numpy.array)
+            _ImageType: The image in the range [0, 1].
         """
-        # TODO: implement converting to float and scaling in [0, 1]
-        raise NotImplementedError
+        return image.astype(np.float64) / _MAX_VALUE
 
 
 class Resize(ImageTransform):
