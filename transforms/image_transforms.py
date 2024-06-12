@@ -101,7 +101,7 @@ class Resize(ImageTransform):
         Returns:
             npt.NDArray[npt.floating]: The image in the range [0, 1].
         """
-        return cv2.resize(image, self._size)
+        return cv2.resize(image, self._size)  # type: ignore
 
 
 class Sequential(ImageTransform):
@@ -111,13 +111,21 @@ class Sequential(ImageTransform):
         self, transform_list: list[tuple[TransformsType, dict]],
     ) -> None:
         self._transforms: list[ImageTransform] = [
-            getattr(sys.modules[__name__], transform.name.lower())(**params)
-            for transform, params in transform_list
+            getattr(sys.modules[__name__], transform.name.lower())(
+                **transform_kwargs,
+            )
+            for transform, transform_kwargs in transform_list
         ]
 
-    def transform(
-        self, image: npt.NDArray[np.float64],
-    ) -> npt.NDArray[np.integer | np.float_]:
+    def transform(self, image: _ImageType) -> _ImageType:
+        """Transform image by applying several transforms together.
+
+        Args:
+            image: The input image to transform.
+
+        Returns:
+            _ImageType: The image with all transforms applied.
+        """
         transformed_image = image.copy()
         for transform in self._transforms:
             transformed_image = transform.transform(transformed_image)
