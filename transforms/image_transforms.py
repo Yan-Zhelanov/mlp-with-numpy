@@ -17,10 +17,10 @@ class ImageTransform(ABC):
         """Transform image.
 
         Args:
-            image (np.ndarray): The input image to transform.
+            image: The input image to transform.
 
         Returns:
-            np.ndarray: Transformed image.
+            Image: Transformed image.
         """
 
 
