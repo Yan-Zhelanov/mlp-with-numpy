@@ -1,9 +1,12 @@
 import numpy as np
-from typing import Union
+
+from constants.types import TargetsType
 
 
-def accuracy_score(targets: np.ndarray, predictions: np.ndarray) -> float:
-    """Accuracy score.
+def get_accuracy_score(
+    targets: TargetsType, predictions: TargetsType,
+) -> float:
+    """Get accuracy score.
 
     The formula is as follows:
         accuracy = (1 / N) Σ(i=0 to N-1) I(y_i == t_i),
@@ -13,15 +16,18 @@ def accuracy_score(targets: np.ndarray, predictions: np.ndarray) -> float:
             - y_i - predicted class of i-sample,
             - t_i - correct class of i-sample,
             - I(y_i == t_i) - indicator function.
+
     Args:
         targets: true labels
         predictions: predicted class
+
+    Returns:
+        float: Accuracy score.
     """
-    # TODO: Implement computation of accuracy
-    raise NotImplementedError
+    return np.mean(targets == predictions)
 
 
-def accuracy_score_per_class(targets: np.ndarray, predictions: np.ndarray) -> Union[list, np.ndarray, dict]:
+def accuracy_score_per_class(targets: np.ndarray, predictions: np.ndarray) -> list | np.ndarray | dict:
     """Accuracy score for each class.
 
     The formula is as follows:
