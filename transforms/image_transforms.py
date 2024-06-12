@@ -13,6 +13,8 @@ _ImageType = npt.NDArray[np.integer | np.floating]
 
 
 class ImageTransform(ABC):
+    """Base class for image transforms."""
+
     @abstractmethod
     def transform(self, image: _ImageType) -> _ImageType:
         """Transform image.
@@ -21,7 +23,7 @@ class ImageTransform(ABC):
             image: The input image to transform.
 
         Returns:
-            Image: Transformed image.
+            _ImageType: Transformed image.
         """
 
 
@@ -38,10 +40,10 @@ class Normalize(ImageTransform):
         """Transform image by scaling each pixel to a range [a, b].
 
         Args:
-            image: np.ndarray, all pixels in [0, 1]
+            image: The input image to transform.
 
         Returns:
-             normalized_image (numpy.array)
+            _ImageType: The image in the range [a, b].
         """
         return self._min_value + (self._max_value - self._min_value) * image
 
@@ -77,7 +79,7 @@ class ToFloat(ImageTransform):
         """Transform image by converting it to float and scaling it to [0, 1].
 
         Args:
-            image: np.ndarray
+            image: The input image to transform.
 
         Returns:
             _ImageType: The image in the range [0, 1].
@@ -95,11 +97,10 @@ class Resize(ImageTransform):
         """Transform image by resizing it.
 
         Args:
-            image (npt.NDArray[npt.integer | npt.floating]): The input image to
-                transform.
+            image: The input image to transform.
 
         Returns:
-            npt.NDArray[npt.floating]: The image in the range [0, 1].
+            _ImageType: The image in the range [0, 1].
         """
         return cv2.resize(image, self._size)  # type: ignore
 
