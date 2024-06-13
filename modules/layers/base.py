@@ -10,7 +10,7 @@ class BaseLayer:
 
     def __init__(self: Self, parameters: list[str] | None = None) -> None:
         self._parameters = parameters if parameters is not None else []
-        self._inputs_cache = None
+        self._inputs_cache: npt.NDArray[np.floating] | None = None
         self._is_trainable = True
 
     @abstractmethod

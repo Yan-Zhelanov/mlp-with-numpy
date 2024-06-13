@@ -45,6 +45,8 @@ class Linear(BaseLayer):
         Returns:
             np.ndarray: matrix of shape (batch_size, output_shape)
         """
+        if self._is_trainable:
+            self._inputs_cache = layer_input
         return layer_input @ self._weights.T + self._bias
 
     def backward(
