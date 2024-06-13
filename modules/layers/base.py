@@ -14,7 +14,7 @@ class BaseLayer:
         self._trainable = True
 
     @abstractmethod
-    def __call__(self: Self, *args, **kwargs) -> None:
+    def __call__(self: Self, *args, **kwargs) -> npt.NDArray[np.floating]:
         raise NotImplementedError
 
     def set_train(self: Self) -> None:
@@ -40,7 +40,9 @@ class BaseLayer:
         return {param: getattr(self, param) for param in self._parameters}
 
     @abstractmethod
-    def backward(self: Self, grad: npt.NDArray[np.floating]) -> None:
+    def backward(
+        self: Self, grad: npt.NDArray[np.floating],
+    ) -> npt.NDArray[np.floating]:
         raise NotImplementedError
 
     def zero_grad(self: Self) -> None:
