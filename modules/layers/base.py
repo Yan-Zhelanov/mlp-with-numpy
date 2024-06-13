@@ -1,50 +1,52 @@
 from abc import abstractmethod
+from typing import Self
 
 import numpy as np
+from numpy import typing as npt
 
 
 class BaseLayer:
     """A base layer class."""
 
-    def __init__(self, parameters: list[str] = None):
-        # List of training parameters
-        self.parameters = parameters if parameters is not None else []
-
-        # Cache for backward propagation
-        self.inputs_cache = None
-
-        # Indicates mode of the layer
-        self.trainable = True
-
-    def train(self):
-        """Sets training mode."""
-        self.trainable = True
-
-    def eval(self):
-        """Sets evaluation mode."""
-        self.trainable = False
+    def __init__(self: Self, parameters: list[str] | None = None) -> None:
+        self._parameters = parameters if parameters is not None else []
+        self._inputs_cache = None
+        self._trainable = True
 
     @abstractmethod
-    def __call__(self, *args, **kwargs):
+    def __call__(self: Self, *args, **kwargs) -> None:
         raise NotImplementedError
 
-    def load_params(self, params: dict):
-        """Loads layer parameters.
+    def set_train(self: Self) -> None:
+        """Set training mode."""
+        self._trainable = True
+
+    def set_eval(self: Self) -> None:
+        """Set evaluation mode."""
+        self._trainable = False
+
+    def load_params(self: Self, params: dict) -> None:
+        """Load layer parameters.
 
         Args:
-            params: dictionary with parameters names (as dict keys) and their values (as dict values)
+            params: dictionary with parameters names (as dict keys) and their
+                values (as dict values).
         """
         for param_name, param_value in params.items():
             setattr(self, param_name, param_value)
 
-    def get_params(self):
-        """Returns layer parameters."""
-        return {param: getattr(self, param) for param in self.parameters}
+    def get_params(self: Self) -> dict:
+        """Return layer parameters."""
+        return {param: getattr(self, param) for param in self._parameters}
 
     @abstractmethod
-    def backward(self, grad):
+    def backward(self: Self, grad: npt.NDArray[np.floating]) -> None:
         raise NotImplementedError
 
-    def zero_grad(self):
-        for param_name in self.parameters:
-            setattr(self, f'grad_{param_name}', np.zeros_like(getattr(self, param_name)))
+    def zero_grad(self: Self) -> None:
+        for param_name in self._parameters:
+            setattr(
+                self, f'grad_{param_name}', np.zeros_like(
+                    getattr(self, param_name),
+                ),
+            )
