@@ -1,10 +1,12 @@
 import numpy as np
 
+from configs.mlp_config import ModelConfig
+
 
 class ParametersInit:
     """Training parameters initialization."""
 
-    def __init__(self, config):
+    def __init__(self, config: ModelConfig):
         self.config = config
 
         # Initialization function according to init_type
@@ -50,7 +52,7 @@ class ParametersInit:
 
     def he(self, param_shape):
         """He initialization.
-        
+
         Initialization with values from a normal distribution with the following parameters:
 
         W ~ N(0, 2 / M_{l-1}),
@@ -64,7 +66,7 @@ class ParametersInit:
 
     def xavier(self, param_shape):
         """Xavier initialization.
-        
+
         Initialization with values from a uniform distribution with the following parameters:
 
         W ~ U(-epsilon, epsilon),
@@ -79,7 +81,7 @@ class ParametersInit:
 
     def xavier_normalized(self, param_shape):
         """Xavier normalized initialization.
-        
+
         Initialization with values from a uniform distribution with the following parameters:
 
         W ~ U(-epsilon, epsilon),
