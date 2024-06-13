@@ -1,34 +1,39 @@
-from modules.layers.base import BaseLayer
-
 import numpy as np
+from numpy import typing as npt
+
+from modules.layers.base import BaseLayer
 
 
 class ReLU(BaseLayer):
     """ReLU (rectified linear unit) activation function."""
 
-    def __init__(self):
-        super().__init__()
-
-    def __call__(self, a):
+    def __call__(
+        self, layer_input: npt.NDArray[np.floating],
+    ) -> npt.NDArray[np.floating]:
         """Forward pass for ReLU.
 
         For mini-batch, ReLU forward pass can be defined as follows:
-            z = max(0, a)
+        z = max(0, a)
 
-            where:
-                - a (batch_size x M_l matrix) represents the output of fully-connected layer,
-                - z (batch_size x M_l matrix) represents activations.
+        where:
+        - a (batch_size x M_l matrix) represents the output of fully-connected
+            layer,
+        - z (batch_size x M_l matrix) represents activations.
 
-        During the training phase, inputs are stored in self.inputs_cache for back propagation.
+        During the training phase, inputs are stored in self.inputs_cache for
+        back propagation.
 
         Args:
-            a: matrix of shape (batch_size, M_l)
+            layer_input: matrix of shape (batch_size, M_l)
 
         Returns:
-            np.ndarray: matrix of shape (batch_size, M_l)
+            npt.NDArray: matrix of shape (batch_size, M_l)
         """
-        # TODO: Implement this method
-        raise NotImplementedError
+        if self._is_trainable:
+            self._inputs_cache = layer_input
+        zeros = np.zeros_like(layer_input)
+        layer_input_with_zeros = np.concatenate((zeros, layer_input), axis=1)
+        return np.max(layer_input_with_zeros, axis=1, keepdims=True)
 
     def backward(self, grad):
         """Backward pass for ReLU.
