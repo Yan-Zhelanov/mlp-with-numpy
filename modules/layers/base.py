@@ -11,7 +11,7 @@ class BaseLayer:
     def __init__(self: Self, parameters: list[str] | None = None) -> None:
         self._parameters = parameters if parameters is not None else []
         self._inputs_cache = None
-        self._trainable = True
+        self._is_trainable = True
 
     @abstractmethod
     def __call__(self: Self, *args, **kwargs) -> npt.NDArray[np.floating]:
@@ -19,11 +19,11 @@ class BaseLayer:
 
     def set_train(self: Self) -> None:
         """Set training mode."""
-        self._trainable = True
+        self._is_trainable = True
 
     def set_eval(self: Self) -> None:
         """Set evaluation mode."""
-        self._trainable = False
+        self._is_trainable = False
 
     def load_params(self: Self, params: dict) -> None:
         """Load layer parameters.
