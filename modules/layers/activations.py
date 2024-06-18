@@ -239,5 +239,6 @@ class Tanh(BaseLayer):
         Returns:
             ∇_{A^l} E: matrix of shape (batch_size, M_l)
         """
-        # TODO: Implement Tanh backward propagation
-        raise NotImplementedError
+        if self._inputs_cache is None:
+            raise RuntimeError('Layer is not in training mode!')
+        return (1 - self._inputs_cache**2) * gradient
