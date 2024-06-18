@@ -36,7 +36,7 @@ class ReLU(BaseLayer):
         return np.max(layer_input_with_zeros, axis=1, keepdims=True)
 
     def backward(
-        self, grad: npt.NDArray[np.floating],
+        self, gradient: npt.NDArray[np.floating],
     ) -> npt.NDArray[np.floating]:
         """Backward pass for ReLU.
 
@@ -48,18 +48,18 @@ class ReLU(BaseLayer):
         - A^l (batch_size x M_l matrix): inputs_cache, that stored during the
             training phase at forward propagation
 
-
         The derivative of ReLU activation function can be defined as follows:
             f'(x) = {0 if x < 0 and 1 otherwise}
 
         Args:
-            grad: matrix of shape (batch_size, M_l) - ∇_{Z^l} E
+            gradient: matrix of shape (batch_size, M_l) - ∇_{Z^l} E
 
         Returns:
             ∇_{A^l} E: matrix of shape (batch_size, M_l)
         """
-        # TODO: Implement ReLU backward propagation
-        raise NotImplementedError
+        if self._inputs_cache is None:
+            raise RuntimeError('Layer is not in training mode!')
+        return (self._inputs_cache >= 0) * gradient
 
 
 class LeakyReLU(BaseLayer):
