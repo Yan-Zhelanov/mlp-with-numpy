@@ -1,6 +1,6 @@
 import numpy as np
 
-from modules.layers.activations import LeakyReLU, ReLU
+from modules.layers.activations import LeakyReLU, ReLU, Sigmoid, Tanh
 
 
 def test_relu():
@@ -37,3 +37,12 @@ def test_leaky_relu_compute_gradient():
     result = leaky_relu.compute_backward_gradient(np.array([[2, 3, 4]]))
 
     assert (result == np.array([[0.2, 3, 0.4]])).all()
+
+
+def test_sigmoid():
+    sigmoid = Sigmoid()
+
+    result = sigmoid(np.array([[0, 1, -1]]))
+
+    assert np.allclose(result, np.array([[0.5, 0.73105858, 0.26894142]]))
+    assert (sigmoid._inputs_cache == np.array([[0, 1, -1]])).all()
