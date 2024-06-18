@@ -64,3 +64,12 @@ def test_tanh():
 
     assert np.allclose(result, np.array([[0, 0.76159416, -0.76159416]]))
     assert (tanh._inputs_cache == np.array([[0, 1, -1]])).all()
+
+
+def test_tanh_compute_gradient():
+    tanh = Tanh()
+    tanh._inputs_cache = np.array([[0, 1, -1]])
+
+    result = tanh.compute_backward_gradient(np.array([[2, 3, 4]]))
+
+    assert np.allclose(result, np.array([[2, 0, 0]]))
