@@ -207,8 +207,12 @@ class Tanh(BaseLayer):
         Returns:
             np.ndarray: matrix of shape (batch_size, M_l)
         """
-        # TODO: Implement this method
-        raise NotImplementedError
+        if self._is_trainable:
+            self._inputs_cache = layer_input
+        return (
+            (np.exp(layer_input) - np.exp(-layer_input))
+            / (np.exp(layer_input) + np.exp(-layer_input))
+        )
 
     def compute_backward_gradient(
         self, gradient: npt.NDArray[np.floating],
