@@ -31,9 +31,8 @@ class ReLU(BaseLayer):
         """
         if self._is_trainable:
             self._inputs_cache = layer_input
-        zeros = np.zeros_like(layer_input)
-        layer_input_with_zeros = np.concatenate((zeros, layer_input), axis=1)
-        return np.max(layer_input_with_zeros, axis=1, keepdims=True)
+        mask = layer_input > 0
+        return layer_input * mask
 
     def compute_backward_gradient(
         self, gradient: npt.NDArray[np.floating],
@@ -59,7 +58,7 @@ class ReLU(BaseLayer):
         """
         if self._inputs_cache is None:
             raise RuntimeError('Layer is not in training mode!')
-        return (self._inputs_cache >= 0) * gradient
+        return (self._inputs_cache > 0) * gradient
 
 
 class LeakyReLU(BaseLayer):
@@ -91,8 +90,14 @@ class LeakyReLU(BaseLayer):
         Returns:
             np.ndarray: matrix of shape (batch_size, M_l)
         """
-        # TODO: Implement this method
-        raise NotImplementedError
+        if self._is_trainable:
+            self._inputs_cache = layer_input
+        zeros = np.zeros_like(layer_input)
+        layer_input_with_zeros = np.concatenate((zeros, layer_input), axis=1)
+        return (
+            np.max(layer_input_with_zeros, axis=1)
+            + self._alpha * np.min(layer_input_with_zeros, axis=1)
+        )
 
     def compute_backward_gradient(
         self, grad: npt.NDArray[np.floating],
