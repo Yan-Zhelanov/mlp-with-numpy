@@ -35,7 +35,7 @@ class ReLU(BaseLayer):
         layer_input_with_zeros = np.concatenate((zeros, layer_input), axis=1)
         return np.max(layer_input_with_zeros, axis=1, keepdims=True)
 
-    def backward(
+    def compute_backward_gradient(
         self, gradient: npt.NDArray[np.floating],
     ) -> npt.NDArray[np.floating]:
         """Backward pass for ReLU.
@@ -94,7 +94,7 @@ class LeakyReLU(BaseLayer):
         # TODO: Implement this method
         raise NotImplementedError
 
-    def backward(
+    def compute_backward_gradient(
         self, grad: npt.NDArray[np.floating],
     ) -> npt.NDArray[np.floating]:
         """Backward pass for LeakyReLU.
@@ -149,7 +149,7 @@ class Sigmoid(BaseLayer):
         # TODO: Implement this method
         raise NotImplementedError
 
-    def backward(
+    def compute_backward_gradient(
         self, grad: npt.NDArray[np.floating],
     ) -> npt.NDArray[np.floating]:
         """Backward pass for Sigmoid.
@@ -207,7 +207,7 @@ class Tanh(BaseLayer):
         # TODO: Implement this method
         raise NotImplementedError
 
-    def backward(
+    def compute_backward_gradient(
         self, grad: npt.NDArray[np.floating],
     ) -> npt.NDArray[np.floating]:
         """Backward pass for Tanh.

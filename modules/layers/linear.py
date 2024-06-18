@@ -49,7 +49,7 @@ class Linear(BaseLayer):
             self._inputs_cache = layer_input
         return layer_input @ self._weights.T + self._bias
 
-    def backward(
+    def compute_backward_gradient(
         self, grad: npt.NDArray[np.floating],
     ) -> npt.NDArray[np.floating]:
         """Backward pass for fully-connected layer.

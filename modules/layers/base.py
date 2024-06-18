@@ -40,7 +40,7 @@ class BaseLayer:
         return {param: getattr(self, param) for param in self._parameters}
 
     @abstractmethod
-    def backward(
+    def compute_backward_gradient(
         self: Self, grad: npt.NDArray[np.floating],
     ) -> npt.NDArray[np.floating]:
         raise NotImplementedError
