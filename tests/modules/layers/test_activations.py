@@ -28,3 +28,12 @@ def test_leaky_relu():
 
     assert (result == np.array([0, 1, -0.1])).all()
     assert (leaky_relu._inputs_cache == np.array([[0, 1, -1]])).all()
+
+
+def test_leaky_relu_compute_gradient():
+    leaky_relu = LeakyReLU(0.1)
+    leaky_relu._inputs_cache = np.array([[0, 1, -1]])
+
+    result = leaky_relu.compute_backward_gradient(np.array([[2, 3, 4]]))
+
+    assert (result == np.array([[0.2, 3, 0.4]])).all()
