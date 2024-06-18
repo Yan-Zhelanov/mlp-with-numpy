@@ -92,12 +92,7 @@ class LeakyReLU(BaseLayer):
         """
         if self._is_trainable:
             self._inputs_cache = layer_input
-        zeros = np.zeros_like(layer_input)
-        layer_input_with_zeros = np.concatenate((zeros, layer_input), axis=1)
-        return (
-            np.max(layer_input_with_zeros, axis=1)
-            + self._alpha * np.min(layer_input_with_zeros, axis=1)
-        )
+        return np.maximum(self._alpha * layer_input, layer_input)
 
     def compute_backward_gradient(
         self, grad: npt.NDArray[np.floating],
