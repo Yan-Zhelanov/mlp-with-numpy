@@ -177,8 +177,9 @@ class Sigmoid(BaseLayer):
         Returns:
             ∇_{A^l} E: matrix of shape (batch_size, M_l)
         """
-        # TODO: Implement Sigmoid backward propagation
-        raise NotImplementedError
+        if self._inputs_cache is None:
+            raise RuntimeError('Layer is not in training mode!')
+        return self._inputs_cache * (1 - self._inputs_cache) * gradient
 
 
 class Tanh(BaseLayer):
