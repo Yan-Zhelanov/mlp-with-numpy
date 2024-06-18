@@ -46,3 +46,12 @@ def test_sigmoid():
 
     assert np.allclose(result, np.array([[0.5, 0.73105858, 0.26894142]]))
     assert (sigmoid._inputs_cache == np.array([[0, 1, -1]])).all()
+
+
+def test_sigmoid_compute_gradient():
+    sigmoid = Sigmoid()
+    sigmoid._inputs_cache = np.array([[0, 1, -1]])
+
+    result = sigmoid.compute_backward_gradient(np.array([[2, 3, 4]]))
+
+    assert np.allclose(result, np.array([[0, 0, -8]]))
