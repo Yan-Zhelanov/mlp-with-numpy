@@ -55,3 +55,12 @@ def test_sigmoid_compute_gradient():
     result = sigmoid.compute_backward_gradient(np.array([[2, 3, 4]]))
 
     assert np.allclose(result, np.array([[0, 0, -8]]))
+
+
+def test_tanh():
+    tanh = Tanh()
+
+    result = tanh(np.array([[0, 1, -1]]))
+
+    assert np.allclose(result, np.array([[0, 0.76159416, -0.76159416]]))
+    assert (tanh._inputs_cache == np.array([[0, 1, -1]])).all()
