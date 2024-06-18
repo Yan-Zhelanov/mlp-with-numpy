@@ -117,8 +117,9 @@ class LeakyReLU(BaseLayer):
         Returns:
             ∇_{A^l} E: matrix of shape (batch_size, M_l)
         """
-        # TODO: Implement LeakyReLU backward propagation
-        raise NotImplementedError
+        if self._inputs_cache is None:
+            raise RuntimeError('Layer is not in training mode!')
+        return np.where(self._inputs_cache > 0, 1, self._alpha) * gradient
 
 
 class Sigmoid(BaseLayer):
