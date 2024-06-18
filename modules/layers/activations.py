@@ -95,7 +95,7 @@ class LeakyReLU(BaseLayer):
         return np.maximum(self._alpha * layer_input, layer_input)
 
     def compute_backward_gradient(
-        self, grad: npt.NDArray[np.floating],
+        self, gradient: npt.NDArray[np.floating],
     ) -> npt.NDArray[np.floating]:
         """Backward pass for LeakyReLU.
 
@@ -112,7 +112,7 @@ class LeakyReLU(BaseLayer):
         follows: f'(x) = {1 if x > 0 and alpha otherwise}
 
         Args:
-            grad: matrix of shape (batch_size, M_l) - ∇_{Z^l} E
+            gradient: matrix of shape (batch_size, M_l) - ∇_{Z^l} E
 
         Returns:
             ∇_{A^l} E: matrix of shape (batch_size, M_l)
@@ -150,7 +150,7 @@ class Sigmoid(BaseLayer):
         raise NotImplementedError
 
     def compute_backward_gradient(
-        self, grad: npt.NDArray[np.floating],
+        self, gradient: npt.NDArray[np.floating],
     ) -> npt.NDArray[np.floating]:
         """Backward pass for Sigmoid.
 
@@ -170,7 +170,7 @@ class Sigmoid(BaseLayer):
             - f(x) = 1 / (1 + e^(-x))
 
         Args:
-            grad: matrix of shape (batch_size, M_l) - ∇_{Z^l} E
+            gradient: matrix of shape (batch_size, M_l) - ∇_{Z^l} E
 
         Returns:
             ∇_{A^l} E: matrix of shape (batch_size, M_l)
@@ -208,7 +208,7 @@ class Tanh(BaseLayer):
         raise NotImplementedError
 
     def compute_backward_gradient(
-        self, grad: npt.NDArray[np.floating],
+        self, gradient: npt.NDArray[np.floating],
     ) -> npt.NDArray[np.floating]:
         """Backward pass for Tanh.
 
@@ -227,7 +227,7 @@ class Tanh(BaseLayer):
             - f(x) = tanh(x)
 
         Args:
-            grad: matrix of shape (batch_size, M_l) - ∇_{Z^l} E
+            gradient: matrix of shape (batch_size, M_l) - ∇_{Z^l} E
 
         Returns:
             ∇_{A^l} E: matrix of shape (batch_size, M_l)
