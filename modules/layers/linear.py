@@ -18,9 +18,9 @@ class Linear(BaseLayer):
         self._input_shape = input_shape
         self._output_shape = output_shape
         self._weights = np.zeros((output_shape, input_shape))
-        self._grad_weights = None
+        self._weights_gradient: npt.NDArray[np.floating] | None = None
         self._bias = np.zeros(output_shape)
-        self._grad_bias = None
+        self._bias_gradient: npt.NDArray[np.floating] | None = None
 
     def __call__(
         self, layer_input: npt.NDArray[np.floating],
@@ -50,29 +50,31 @@ class Linear(BaseLayer):
         return layer_input @ self._weights.T + self._bias
 
     def compute_backward_gradient(
-        self, grad: npt.NDArray[np.floating],
+        self, gradient: npt.NDArray[np.floating],
     ) -> npt.NDArray[np.floating]:
         """Backward pass for fully-connected layer.
 
         For mini-batch, FC layer backward pass can be defined as follows:
-
-            ∇_{b^l} E = Σ(i=0 to N-1) u_i
-            ∇_{W^l} E = (∇_{A^l} E)^T * Z^{l-1}
-            ∇_{Z^{l-1}} E = ∇_{A^l} E * W^l
+        ∇_{b^l} E = Σ(i=0 to N-1) u_i
+        ∇_{W^l} E = (∇_{A^l} E)^T * Z^{l-1}
+        ∇_{Z^{l-1}} E = ∇_{A^l} E * W^l
 
         where:
-            - u_i:  i-th row of matrix ∇_{A^l} E
-            - W^l (output_shape x input_shape matrix): weights of current layer
-            - Z^{l-1} (batch_size x input_shape matrix): inputs_cache, that
-                stored during the training phase at forward propagation
+        - u_i:  i-th row of matrix ∇_{A^l} E
+        - W^l (output_shape x input_shape matrix): weights of current layer
+        - Z^{l-1} (batch_size x input_shape matrix): inputs_cache, that
+            stored during the training phase at forward propagation
 
         Store gradients of weights and bias in grad_weights and grad_bias
 
         Args:
-            grad: matrix of shape (batch_size, output_shape) - ∇_{A^l} E
+            gradient: matrix of shape (batch_size, output_shape) - ∇_{A^l} E
 
         Returns:
             ∇_{Z^{l-1}} E: matrix of shape (batch_size, input_shape)
         """
-        # TODO: Implement fully-connected layer backward propagation
-        raise NotImplementedError
+        if self._inputs_cache is None:
+            raise RuntimeError('Layer is not in training mode!')
+        self._bias_gradient = np.sum(gradient, axis=0)
+        self._weights_gradient = gradient.T @ self._inputs_cache
+        return gradient @ self._weights
