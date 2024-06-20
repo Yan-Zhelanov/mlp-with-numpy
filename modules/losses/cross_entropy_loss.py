@@ -1,6 +1,6 @@
 import numpy as np
 
-from modules.layers.softmax import softmax
+from modules.layers.softmax import calculate_softmax
 
 
 class CrossEntropyLoss:
