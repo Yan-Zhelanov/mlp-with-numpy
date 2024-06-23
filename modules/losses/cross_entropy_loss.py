@@ -1,45 +1,57 @@
 import numpy as np
-
-from modules.layers.softmax import calculate_softmax
+from numpy import typing as npt
 
 
 class CrossEntropyLoss:
-    """Cross-Entropy loss with Softmax"""
+    """Cross-Entropy loss with Softmax."""
 
-    def __init__(self):
-        pass
+    def __init__(self) -> None:
+        """Initialize a new instance of CrossEntropyLoss."""
 
-    def __call__(self, targets: np.ndarray, logits: np.ndarray):
-        """
+    def __call__(
+        self,
+        targets: npt.NDArray[np.floating],
+        logits: npt.NDArray[np.floating],
+    ) -> float:
+        """Calculate cross-entropy loss.
+
         For a one-hot encoded targets t and model output y:
-            E = - (1 / N) Σ(i=0 to N-1) Σ(k=0 to K-1) t_ik * ln(y_k (x_i)),
+        E = - (1 / N) Σ(i=0 to N-1) Σ(k=0 to K-1) t_ik * ln(y_k (x_i)),
 
-            where:
-                - N is the number of data points,
-                - K is the number of classes,
-                - t_{ik} is the value from OHE target matrix for data point i and class k,
-                - y_k (x_i) is model output after softmax for data point i and class k.
+        where:
+        - N is the number of data points,
+        - K is the number of classes,
+        - t_{ik} is the value from OHE target matrix for data point i and
+            class k,
+        - y_k (x_i) is model output after softmax for data point i and class k.
 
         Numerically stable formula:
-            E = (1 / N) Σ(i=0 to N-1) Σ(k=0 to K-1) t_ik * (ln(Σ(l=0 to K-1) e^((z_il - c_i)) - (z_ik - c_i)),
+        E = (1 / N) Σ(i=0 to N-1) Σ(k=0 to K-1)
+            t_ik * (ln(Σ(l=0 to K-1) e^((z_il - c_i)) - (z_ik - c_i)),
 
-            where:
-                - N is the number of data points,
-                - K is the number of classes,
-                - t_{ik} is the value from OHE target matrix for data point i and class k,
-                - z_{il} is the model output before softmax for data point i and class l,
-                - z is the model output before softmax (logits),
-                - c_i is maximum value for each data point i in vector z_i.
+        where:
+        - N is the number of data points,
+        - K is the number of classes,
+        - t_{ik} is the value from OHE target matrix for data point i and
+            class k,
+        - z_{il} is the model output before softmax for data point i and
+            class l,
+        - z is the model output before softmax (logits),
+        - c_i is maximum value for each data point i in vector z_i.
 
         Parameters:
-            targets (np.ndarray): The one-hot encoded target data.
-            logits (np.ndarray): The model output before softmax.
+            targets (npt.NDArray[np.floating]): The one-hot encoded target
+                data.
+            logits (npt.NDArray[np.floating]): The model output before softmax.
 
         Returns:
             float: The value of the loss function.
         """
-        # TODO: Implement this function, it is possible to do it without loop using numpy
-        raise NotImplementedError
+        max_logit = np.max(logits, axis=1, keepdims=True)
+        logits -= max_logit
+        exp_logits = np.exp(logits)
+        sum_exp_logits = np.log(np.sum(exp_logits, axis=1, keepdims=True))
+        return np.mean(targets * (sum_exp_logits - logits))
 
     def backward(self, targets: np.ndarray, logits: np.ndarray):
         """Backward pass for Cross-Entropy Loss.
