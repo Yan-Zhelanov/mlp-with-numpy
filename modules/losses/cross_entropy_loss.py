@@ -1,6 +1,8 @@
 import numpy as np
 from numpy import typing as npt
 
+from modules.layers.softmax import calculate_softmax
+
 
 class CrossEntropyLoss:
     """Cross-Entropy loss with Softmax."""
@@ -53,23 +55,28 @@ class CrossEntropyLoss:
         sum_exp_logits = np.log(np.sum(exp_logits, axis=1, keepdims=True))
         return np.mean(targets * (sum_exp_logits - logits))
 
-    def backward(self, targets: np.ndarray, logits: np.ndarray):
-        """Backward pass for Cross-Entropy Loss.
+    def compute_backward_gradient(
+        self,
+        targets: npt.NDArray[np.floating],
+        logits: npt.NDArray[np.floating],
+    ) -> npt.NDArray[np.floating]:
+        """Compute a backward gradient for Cross-Entropy Loss.
 
         For mini-batch, backward pass can be defined as follows:
-            ∇_{Z^L} E = 1 / N (y - t)
-            y = Softmax(Z^L)
+        ∇_{Z^L} E = 1 / N (y - t)
+        y = Softmax(Z^L)
 
         where:
-            - Z^L - the model output before softmax
-            - t (N x K matrix): One-Hot encoded targets representation
+        - Z^L - the model output before softmax
+        - t (N x K matrix): One-Hot encoded targets representation
 
         Args:
-            targets (np.ndarray): The one-hot encoded target data.
-            logits (np.ndarray): The model output before softmax.
+            targets (npt.NDArray[np.floating]): The one-hot encoded target
+                data.
+            logits (npt.NDArray[np.floating]): The model output before softmax.
 
         Returns:
-            ∇_{Z^L} E: matrix of shape (batch_size, K)
+            ∇_{Z^L} E: matrix of shape (batch_size, K).
         """
-        # TODO: Implement Cross-Entropy Loss backward propagation
-        raise NotImplementedError
+        softmax = calculate_softmax(logits)
+        return (softmax - targets) / targets.shape[0]
