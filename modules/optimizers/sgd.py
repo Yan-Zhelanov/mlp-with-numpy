@@ -1,28 +1,35 @@
 import numpy as np
+from numpy import typing as npt
+
+from models.mlp import MLP
 
 
 class SGD:
     """A class for implementing Stochastic gradient descent."""
 
-    def __init__(self, model, learning_rate=1e-4):
-        self.learning_rate = learning_rate
-        self.model = model
+    def __init__(self, model: MLP, learning_rate=0.0001) -> None:
+        self._learning_rate = learning_rate
+        self._model = model
 
-    def backward(self, grad: np.ndarray):
-        """Backward pass for the model.
+    def compute_backward_gradient(
+        self, gradient: npt.NDArray[np.floating],
+    ) -> npt.NDArray[np.floating]:
+        """Compute a backward gradient for the all model.
 
-        This method propagates gradient across all layers from model.layers in reverse order.
-
-        Compute gradients sequentially by passing through each layer in model.layers (using layer's backward() method)
+        This method propagates gradient across all layers from model.layers in
+        reverse order.
+        Compute gradients sequentially by passing through each layer in
+        model.layers (using layer's backward() method).
 
         Args:
-            grad: the gradient of the loss function w.r.t. the model output - ∇_{Z^L} E
+            gradient: the gradient of the loss function w.r.t. the model
+                output - ∇_{Z^L} E.
         """
         # TODO: Implement this method
         raise NotImplementedError
 
-    def step(self):
-        """Updates the parameters of the model layers."""
+    def step(self) -> None:
+        """Update the parameters of the model layers."""
         # TODO: For each layer in model.layers:
         #  If the layer has parameters, for each parameter in layer.parameters do:
         #       - get the parameter value with getattr(layer, parameter_name)
@@ -31,29 +38,33 @@ class SGD:
         #       - set new parameter value with setattr(layer, parameter_name, new_value)
         raise NotImplementedError
 
-    def update_param(self, param: np.ndarray, grad: np.ndarray):
+    def update_parameters(
+        self,
+        parameters: npt.NDArray[np.floating],
+        gradient: npt.NDArray[np.floating],
+    ) -> npt.NDArray[np.floating]:
         """Update layer parameters.
 
         Layers parameters should be updated according to the following rule:
-            w_new = w_old - γ * ∇_{w_old} E,
+        w_new = w_old - γ * ∇_{w_old} E,
 
-            where:
-                γ - self.learning_rate,
-                w_old - layer's current parameter value,
-                ∇_{w_old} E - gradient w.r.t. the layer's parameter,
-                w_new - new parameter value to set.
+        where:
+        γ - self.learning_rate,
+        w_old - layer's current parameter value,
+        ∇_{w_old} E - gradient w.r.t. the layer's parameter,
+        w_new - new parameter value to set.
 
         Args:
-            param: parameter matrix (w_old)
-            grad: gradient matrix (∇_{w_old} E)
+            parameters (npt.NDArray[np.floating]): The old weights matrix.
+            gradient (npt.NDArray[np.floating]): Gradient matrix (∇_{w_old} E).
 
         Returns:
-            w_new: matrix
+            npt.NDArray[np.floating]: The new weights matrix.
         """
         # TODO: Implement this method
         raise NotImplementedError
 
-    def zero_grad(self):
+    def zero_grad(self) -> None:
         """Reset gradient parameters for the model layers."""
-        for layer in self.model.layers:
+        for layer in self._model._layers:
             layer.zero_grad()
