@@ -1,6 +1,7 @@
 import sys
 
 import numpy as np
+from numpy import typing as npt
 
 from configs.mlp_config import ModelConfig
 from modules.layers.activations import LeakyReLU, ReLU, Sigmoid, Tanh
@@ -20,10 +21,82 @@ class MLP:
         """
         self._config = config
         self._params_init = ParametersInit(config)
-        self._layers = self._init_layers()
+        self._layers: list[BaseLayer] = self._init_layers()
+
+    def __call__(
+        self, inputs: npt.NDArray[np.floating],
+    ) -> npt.NDArray[np.floating]:
+        """Forward propagation implementation.
+
+        This method propagates inputs through all the layers from self.layers.
+        It should include the following steps:
+        1. Reshape inputs into a 2D array (first dimension is the mini-batch
+        size).
+        2. Update inputs sequentially by passing through each layer in
+        self._layers (using layer's __call__() method).
+        3. Return updated inputs.
+
+        Args:
+            inputs (npt.NDArray[np.floating]): inputs to the model.
+
+        Returns:
+            npt.NDArray: updated inputs.
+        """
+        # TODO: Implement this method
+        raise NotImplementedError
+
+    @property
+    def layers(self) -> list[BaseLayer]:
+        """Returns the list of layers in the model.
+
+        Returns:
+            list[BaseLayer]: list of layers.
+        """
+        return self._layers
+
+    def train(self) -> None:
+        """Set the training mode for each layer."""
+        for layer in self._layers:
+            layer.set_train()
+
+    def eval(self) -> None:
+        """Set the evaluation mode for each layer."""
+        for layer in self._layers:
+            layer.set_eval()
+
+    def load_params(self, parameters: list[dict[str, npt.NDArray]]) -> None:
+        """Load model parameters.
+
+        Args:
+            parameters (list[dict[str, npt.NDArray]]): list of dictionaries
+                with parameters names and their values.
+
+        Raises:
+            ValueError: if the number of parameters does not match the number
+                of layers in the model.
+        """
+        if len(parameters) != len(self._layers):
+            raise ValueError(
+                f'Invalid number of parameters: {len(parameters)} when'
+                + f' expected: {len(self._layers)}',
+            )
+        for layer_index, layer in enumerate(self._layers):
+            layer.load_params(parameters[layer_index])
+
+    def get_params(self) -> list[dict[str, npt.NDArray]]:
+        """Get model parameters.
+
+        Returns:
+            list[dict[str, npt.NDArray]]: list of dictionaries with parameters
+                names and their values.
+        """
+        parameters = []
+        for layer in self._layers:
+            parameters.append(layer.get_params())
+        return parameters
 
     def _init_layers(self) -> list[BaseLayer]:
-        """MLP layers initialization.
+        """Initialize MLP layers.
 
         This method should include the following steps:
         1. Go through the layers ((layer_name, layer_params) tuples) defined in
@@ -40,43 +113,5 @@ class MLP:
             list of initialized layers
         """
         # TODO: Implement this method
-        layers = []
+        layers: list[BaseLayer] = []
         raise NotImplementedError
-
-    def train(self):
-        """Sets the training mode for each layer."""
-        for layer in self._layers:
-            layer.train()
-
-    def eval(self):
-        """Sets the evaluation mode for each layer."""
-        for layer in self._layers:
-            layer.eval()
-
-    def __call__(self, inputs: np.ndarray):
-        """Forward propagation implementation.
-
-        This method propagates inputs through all the layers from self.layers.
-        It should include the following steps:
-            1. Reshape inputs into a 2D array (first dimension is the mini-batch size)
-            2. Update inputs sequentially by passing through each layer in self.layers (using layer's __call__() method)
-            3. Return updated inputs
-
-        Returns:
-            np.ndarray: updated inputs
-        """
-        # TODO: Implement this method
-        raise NotImplementedError
-
-    def load_params(self, parameters):
-        """Loads model parameters."""
-        assert len(parameters) == len(self._layers)
-        for i, layer in enumerate(self._layers):
-            layer.load_params(parameters[i])
-
-    def get_params(self):
-        """Returns model parameters."""
-        parameters = []
-        for layer in self._layers:
-            parameters.append(layer.get_params())
-        return parameters
