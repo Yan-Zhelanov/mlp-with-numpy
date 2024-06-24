@@ -4,9 +4,14 @@ import numpy as np
 from numpy import typing as npt
 
 from configs.mlp_config import ModelConfig
-from modules.layers.activations import LeakyReLU, ReLU, Sigmoid, Tanh
+from modules.layers.activations import (  # noqa: F401
+    LeakyReLU,
+    ReLU,
+    Sigmoid,
+    Tanh,
+)
 from modules.layers.base import BaseLayer
-from modules.layers.linear import Linear
+from modules.layers.linear import Linear  # noqa: F401
 from modules.utils.parameter_initialization import ParameterInitializator
 
 
