@@ -16,17 +16,18 @@ class SGD:
     ) -> npt.NDArray[np.floating]:
         """Compute a backward gradient for the all model.
 
-        This method propagates gradient across all layers from model.layers in
-        reverse order.
-        Compute gradients sequentially by passing through each layer in
-        model.layers (using layer's backward() method).
+        This method propagates gradient across all layers in reverse order.
 
         Args:
-            gradient: the gradient of the loss function w.r.t. the model
-                output - ∇_{Z^L} E.
+            gradient (npt.NDArray[np.floating]): the gradient of the loss
+                function w.r.t. the model output - ∇_{Z^L} E.
+
+        Returns:
+            npt.NDArray: the gradient of the loss function.
         """
-        # TODO: Implement this method
-        raise NotImplementedError
+        for layer in reversed(self._model.layers):
+            gradient = layer.compute_backward_gradient(gradient)
+        return gradient
 
     def step(self) -> None:
         """Update the parameters of the model layers."""
