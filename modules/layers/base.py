@@ -9,7 +9,7 @@ class BaseLayer:
     """A base layer class."""
 
     def __init__(self: Self, parameters: list[str] | None = None) -> None:
-        self._parameters = parameters if parameters is not None else []
+        self.parameters = parameters if parameters is not None else []
         self._inputs_cache: npt.NDArray[np.floating] | None = None
         self._is_trainable = True
 
@@ -37,7 +37,7 @@ class BaseLayer:
 
     def get_params(self: Self) -> dict:
         """Return layer parameters."""
-        return {param: getattr(self, param) for param in self._parameters}
+        return {param: getattr(self, param) for param in self.parameters}
 
     @abstractmethod
     def compute_backward_gradient(
@@ -45,10 +45,10 @@ class BaseLayer:
     ) -> npt.NDArray[np.floating]:
         raise NotImplementedError
 
-    def zero_grad(self: Self) -> None:
-        for param_name in self._parameters:
+    def set_gradients_to_zero(self: Self) -> None:
+        for param_name in self.parameters:
             setattr(
-                self, f'grad_{param_name}', np.zeros_like(
+                self, f'gradient_{param_name}', np.zeros_like(
                     getattr(self, param_name),
                 ),
             )
