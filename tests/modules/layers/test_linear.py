@@ -5,7 +5,7 @@ from modules.layers.linear import Linear
 
 def test_linear():
     linear = Linear(2, 3)
-    linear._weights = np.array([[1, 2], [2, 3], [3, 4]])
+    linear.weights = np.array([[1, 2], [2, 3], [3, 4]])
     expected_result = np.array([[5, 8, 11], [11, 18, 25]])
     expected_cache = np.array([[1, 2], [3, 4]])
 
@@ -17,7 +17,7 @@ def test_linear():
 
 def test_linear_compute_gradient():
     linear = Linear(2, 3)
-    linear._weights = np.array([[1, 2], [2, 3], [3, 4]])
+    linear.weights = np.array([[1, 2], [2, 3], [3, 4]])
     linear._inputs_cache = np.array([[1, 2], [3, 4]])
     expected_result = np.array([[38, 56], [56, 83]])
     expected_weights_gradient = np.array([[29, 42], [33, 48], [37, 54]])
@@ -28,5 +28,5 @@ def test_linear_compute_gradient():
     )
 
     assert (result == expected_result).all()
-    assert (linear._weights_gradient == expected_weights_gradient).all()
-    assert (linear._bias_gradient == expected_bias_gradient).all()
+    assert (linear.weights_gradient == expected_weights_gradient).all()
+    assert (linear.bias_gradient == expected_bias_gradient).all()

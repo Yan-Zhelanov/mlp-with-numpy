@@ -15,12 +15,12 @@ class Linear(BaseLayer):
             output_shape: number of output features (M_l)
         """
         super().__init__(['weights', 'bias'])
+        self.weights = np.zeros((output_shape, input_shape))
+        self.weights_gradient: npt.NDArray[np.floating] | None = None
+        self.bias = np.zeros(output_shape)
+        self.bias_gradient: npt.NDArray[np.floating] | None = None
         self._input_shape = input_shape
         self._output_shape = output_shape
-        self._weights = np.zeros((output_shape, input_shape))
-        self._weights_gradient: npt.NDArray[np.floating] | None = None
-        self._bias = np.zeros(output_shape)
-        self._bias_gradient: npt.NDArray[np.floating] | None = None
 
     def __call__(
         self, layer_input: npt.NDArray[np.floating],
@@ -47,7 +47,7 @@ class Linear(BaseLayer):
         """
         if self._is_trainable:
             self._inputs_cache = layer_input
-        return layer_input @ self._weights.T + self._bias
+        return layer_input @ self.weights.T + self.bias
 
     def compute_backward_gradient(
         self, gradient: npt.NDArray[np.floating],
@@ -75,6 +75,6 @@ class Linear(BaseLayer):
         """
         if self._inputs_cache is None:
             raise RuntimeError('Layer is not in training mode!')
-        self._bias_gradient = np.sum(gradient, axis=0)
-        self._weights_gradient = gradient.T @ self._inputs_cache
-        return gradient @ self._weights
+        self.bias_gradient = np.sum(gradient, axis=0)
+        self.weights_gradient = gradient.T @ self._inputs_cache
+        return gradient @ self.weights

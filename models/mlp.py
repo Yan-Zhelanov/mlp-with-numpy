@@ -105,8 +105,10 @@ class MLP:
         """
         layers: list[BaseLayer] = []
         for layer_name, layer_params in self._config.LAYERS:
-            layer = getattr(sys.modules[__name__], layer_name)(**layer_params)
-            if hasattr(layer, 'params_init'):
-                layer.params_init(self._initializator)
+            layer: BaseLayer = getattr(sys.modules[__name__], layer_name)(
+                **layer_params,
+            )
+            if layer.parameters:
+                self._initializator(layer)
             layers.append(layer)
         return layers
