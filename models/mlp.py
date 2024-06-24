@@ -42,8 +42,10 @@ class MLP:
         Returns:
             npt.NDArray: updated inputs.
         """
-        # TODO: Implement this method
-        raise NotImplementedError
+        inputs = inputs.reshape((inputs.shape[0], -1))
+        for layer in self._layers:
+            inputs = layer(inputs)
+        return inputs
 
     @property
     def layers(self) -> list[BaseLayer]:
