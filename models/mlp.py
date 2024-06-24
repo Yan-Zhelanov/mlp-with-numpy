@@ -98,20 +98,13 @@ class MLP:
     def _init_layers(self) -> list[BaseLayer]:
         """Initialize MLP layers.
 
-        This method should include the following steps:
-        1. Go through the layers ((layer_name, layer_params) tuples) defined in
-            self.config.layers one by one.
-        2. For each layer, get an instance of the layer class with layer_name
-            and layer_params as:
-            layer = getattr(sys.modules[__name__], layer_name)(**layer_params)
-        3. For layer instance call self.params_init function to initialize
-            layer parameters if it has those (!).
-        4. Append the initialized layer to the layers list.
-        5. Return list with all the initialized layers.
-
         Returns:
             list of initialized layers
         """
-        # TODO: Implement this method
         layers: list[BaseLayer] = []
-        raise NotImplementedError
+        for layer_name, layer_params in self._config.LAYERS:
+            layer = getattr(sys.modules[__name__], layer_name)(**layer_params)
+            if hasattr(layer, 'params_init'):
+                layer.params_init(self._initializator)
+            layers.append(layer)
+        return layers
