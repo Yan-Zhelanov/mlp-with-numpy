@@ -3,8 +3,12 @@ from numpy import typing as npt
 
 from configs.mlp_config import ModelConfig
 
+_DEFAULT_SIGMA = 0.01
+_DEFAULT_EPSILON = 0.01
+_DEFAULT_MU = 0
 
-class ParametersInit:
+
+class ParameterInitializator:
     """Training parameters initialization."""
 
     def __init__(self, config: ModelConfig):
@@ -50,9 +54,11 @@ class ParametersInit:
         Returns:
             npt.NDArray[np.floating]: initialized parameters.
         """
-        # TODO: Implement this method using np.random.normal
-        #  (method should return initialized values)
-        raise NotImplementedError
+        return np.random.normal(
+            self._config.INIT_KWARGS.get('mu', _DEFAULT_MU),
+            self._config.INIT_KWARGS.get('sigma', _DEFAULT_SIGMA),
+            size=param_shape,
+        )
 
     def get_init_uniform(
         self, param_shape: tuple[int, ...],
@@ -70,9 +76,11 @@ class ParametersInit:
         Returns:
             npt.NDArray[np.floating]: initialized parameters.
         """
-        # TODO: Implement this method using np.random.uniform
-        #  (method should return initialized values)
-        raise NotImplementedError
+        return np.random.uniform(
+            -self._config.INIT_KWARGS.get('epsilon', _DEFAULT_EPSILON),
+            self._config.INIT_KWARGS.get('epsilon', _DEFAULT_EPSILON),
+            size=param_shape,
+        )
 
     def get_init_he(
         self, param_shape: tuple[int, ...],
@@ -80,7 +88,7 @@ class ParametersInit:
         """Initialize He.
 
         Initialization with values from a normal distribution with the
-        following parameters: W ~ N(0, 2 / M_{l-1}),
+        following parameters: W ~ N(0, sqrt{2 / M_{l-1}}),
         where:
         - M_{l-1} - number of input features of a layer
 
@@ -90,9 +98,9 @@ class ParametersInit:
         Returns:
             npt.NDArray[np.floating]: initialized parameters.
         """
-        # TODO: Implement this method using np.random.normal
-        #  (method should return initialized values)
-        raise NotImplementedError
+        return np.random.normal(
+            0, np.sqrt(2 / param_shape[1]), size=param_shape,
+        )
 
     def get_init_xavier(
         self, param_shape: tuple[int, ...],
@@ -112,9 +120,8 @@ class ParametersInit:
         Returns:
             npt.NDArray[np.floating]: initialized parameters.
         """
-        # TODO: Implement this method using np.random.uniform
-        #  (method should return initialized values)
-        raise NotImplementedError
+        epsilon = np.sqrt(1 / param_shape[1])
+        return np.random.uniform(-epsilon, epsilon, param_shape)
 
     def get_init_xavier_normalized(
         self, param_shape: tuple[int, ...],
@@ -134,6 +141,5 @@ class ParametersInit:
         Returns:
             npt.NDArray[np.floating]: initialized parameters.
         """
-        # TODO: Implement this method using np.random.uniform
-        #  (method should return initialized values)
-        raise NotImplementedError
+        epsilon = np.sqrt(6 / (param_shape[0] + param_shape[1]))
+        return np.random.uniform(-epsilon, epsilon, param_shape)

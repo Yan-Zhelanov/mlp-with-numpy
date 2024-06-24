@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from modules.utils.parameter_initialization import ParametersInit
+from modules.utils.parameter_initialization import ParameterInitializator
 
 _SIGMA = 0.01
 _EPSILON = 0.01
@@ -26,10 +26,10 @@ class MockModelConfig:
 @pytest.fixture
 def init():
     config = MockModelConfig()
-    return ParametersInit(config)
+    return ParameterInitializator(config)
 
 
-def test_get_init_zeros(init: ParametersInit):
+def test_get_init_zeros(init: ParameterInitializator):
     param_shape = (3, 3)
 
     result = init.get_init_zeros(param_shape)
@@ -37,7 +37,7 @@ def test_get_init_zeros(init: ParametersInit):
     assert np.array_equal(result, np.zeros(param_shape))
 
 
-def test_get_init_normal(init: ParametersInit):
+def test_get_init_normal(init: ParameterInitializator):
     param_shape = (3, 3)
 
     result = init.get_init_normal(param_shape)
@@ -47,7 +47,7 @@ def test_get_init_normal(init: ParametersInit):
     assert np.allclose(result.std(), _SIGMA, atol=_TOLERANCE)
 
 
-def test_get_init_uniform(init: ParametersInit):
+def test_get_init_uniform(init: ParameterInitializator):
     param_shape = (3, 3)
     epsilon = 0.1
 
@@ -58,7 +58,7 @@ def test_get_init_uniform(init: ParametersInit):
     assert np.all(result <= epsilon)
 
 
-def test_get_init_he(init: ParametersInit):
+def test_get_init_he(init: ParameterInitializator):
     param_shape = (3, 3)
     stddev = np.sqrt(2.0 / param_shape[0])
 
@@ -69,7 +69,7 @@ def test_get_init_he(init: ParametersInit):
     assert np.allclose(result.std(), stddev, atol=_TOLERANCE)
 
 
-def test_get_init_xavier(init: ParametersInit):
+def test_get_init_xavier(init: ParameterInitializator):
     param_shape = (3, 3)
     epsilon = np.sqrt(1.0 / param_shape[0])
 
@@ -80,7 +80,7 @@ def test_get_init_xavier(init: ParametersInit):
     assert np.all(result <= epsilon)
 
 
-def test_get_init_xavier_normalized(init: ParametersInit):
+def test_get_init_xavier_normalized(init: ParameterInitializator):
     param_shape = (3, 3)
     epsilon = np.sqrt(6.0 / (param_shape[0] + param_shape[1]))
 

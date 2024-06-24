@@ -7,7 +7,7 @@ from configs.mlp_config import ModelConfig
 from modules.layers.activations import LeakyReLU, ReLU, Sigmoid, Tanh
 from modules.layers.base import BaseLayer
 from modules.layers.linear import Linear
-from modules.utils.parameter_initialization import ParametersInit
+from modules.utils.parameter_initialization import ParameterInitializator
 
 
 class MLP:
@@ -20,7 +20,7 @@ class MLP:
             config: model configurations
         """
         self._config = config
-        self._params_init = ParametersInit(config)
+        self._initializator = ParameterInitializator(config)
         self._layers: list[BaseLayer] = self._init_layers()
 
     def __call__(
