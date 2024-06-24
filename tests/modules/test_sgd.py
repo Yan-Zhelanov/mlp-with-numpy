@@ -9,6 +9,13 @@ from modules.optimizers.sgd import SGD
 
 
 class MockLayer(BaseLayer):
+    def __init__(self: Self, parameters: list[str] | None = None) -> None:
+        self.parameters = ['weights', 'bias']
+        self.weights = np.ones((5, 5))
+        self.bias = np.ones(5)
+        self.gradient_weights = np.ones((5, 5))
+        self.gradient_bias = np.ones(5)
+
     def __call__(self: Self, *args, **kwargs) -> npt.NDArray[np.floating]:
         return np.ones((5, 5))
 
@@ -19,12 +26,12 @@ class MockLayer(BaseLayer):
 
 
 class MockModel:
-    def __init__(self, layers: int) -> None:
-        self._layers_count = layers
+    def __init__(self, layers_count: int) -> None:
+        self._layers = [MockLayer() for _ in range(layers_count)]
 
     @property
-    def layers(self) -> list[BaseLayer]:
-        return [MockLayer() for _ in range(self._layers_count)]
+    def layers(self) -> list[MockLayer]:
+        return self._layers
 
 
 def test_sgd_compute_gradient() -> None:
@@ -34,3 +41,14 @@ def test_sgd_compute_gradient() -> None:
     result = model.compute_backward_gradient(gradient)
 
     assert (result == gradient + 3).all()
+
+
+def test_sgd_step():
+    model = MockModel(1)
+    expected_value = 0.9
+
+    sgd = SGD(model, learning_rate=0.1)
+    sgd.step()
+
+    assert np.allclose(model.layers[0].weights, expected_value)
+    assert np.allclose(model.layers[0].bias, expected_value)
