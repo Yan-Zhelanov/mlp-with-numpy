@@ -31,13 +31,13 @@ class SGD:
 
     def step(self) -> None:
         """Update the parameters of the model layers."""
-        # TODO: For each layer in model.layers:
-        #  If the layer has parameters, for each parameter in layer.parameters do:
-        #       - get the parameter value with getattr(layer, parameter_name)
-        #       - get stored gradient value with getattr(layer, f'grad_{parameter_name}')
-        #       - compute new parameter value with update_param() method
-        #       - set new parameter value with setattr(layer, parameter_name, new_value)
-        raise NotImplementedError
+        for layer in self._model.layers:
+            if hasattr(layer, 'parameters') and layer.parameters is not None:
+                for parameter in layer.parameters:
+                    old_value = getattr(layer, parameter)
+                    gradient = getattr(layer, f'gradient_{parameter}')
+                    new_value = self.update_parameters(old_value, gradient)
+                    setattr(layer, parameter, new_value)
 
     def update_parameters(
         self,
@@ -62,10 +62,9 @@ class SGD:
         Returns:
             npt.NDArray[np.floating]: The new weights matrix.
         """
-        # TODO: Implement this method
-        raise NotImplementedError
+        return parameters - self._learning_rate * gradient
 
     def zero_grad(self) -> None:
         """Reset gradient parameters for the model layers."""
         for layer in self._model._layers:
-            layer.zero_grad()
+            layer.set_gradients_to_zero()
