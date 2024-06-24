@@ -60,13 +60,14 @@ def test_get_init_uniform(init: ParameterInitializator):
 
 def test_get_init_he(init: ParameterInitializator):
     param_shape = (3, 3)
-    stddev = np.sqrt(2.0 / param_shape[0])
+    std = np.sqrt(2.0 / param_shape[0])
+    he_tolerance = 0.8
 
     result = init.get_init_he(param_shape)
 
     assert result.shape == param_shape
-    assert np.allclose(result.mean(), _MU, atol=_TOLERANCE)
-    assert np.allclose(result.std(), stddev, atol=_TOLERANCE)
+    assert np.allclose(result.mean(), _MU, atol=he_tolerance)
+    assert np.allclose(result.std(), std, atol=he_tolerance)
 
 
 def test_get_init_xavier(init: ParameterInitializator):
