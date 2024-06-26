@@ -1,10 +1,10 @@
 import os
 import pickle
-from configs.experiment_config import ExperimentConfig
 
 import numpy as np
 
-from data_loaders.data_loader import DataLoader
+from configs.experiment_config import ExperimentConfig
+from data_loaders.data_loader import BatchType, DataLoader
 from dataset.emotions_dataset import EmotionsDataset
 from models.mlp import MLP
 from modules.losses.cross_entropy_loss import CrossEntropyLoss
@@ -84,29 +84,32 @@ class Trainer:
             checkpoint = pickle.load(checkpoint_file)
         self._model.load_params(checkpoint['model'])
 
-    def make_step(self, batch: dict, update_model=False):
-        """This method performs one step, including forward pass, calculation of the target function, backward
-        pass and updating the model weights (if update_model is True).
+    def make_step(self, batch: BatchType, update_model=False):
+        """Perform one step of forward and backward propagation.
+
+        And updating the model weights (if update_model is True).
 
         Args:
-            batch: batch data
-            update_model (bool): if True it is necessary to perform a backward pass and update the model weights
+            batch (BatchType): batch with images and labels.
+            update_model (bool): if True it is necessary to perform a backward
+                pass and update the model weights.
 
         Returns:
             loss: loss function value
             output: model output (batch_size x num_classes)
         """
-        # TODO: Implement one step of forward and backward propagation:
-        #       1. Get images and OHE targets from batch
-        #       2. Get model output
-        #       3. Compute loss
-        #       4. If update_model is True, make backward propagation:
-        #           - Set the gradient of the layer parameters to zero using optimizer.zero_grad()
-        #           - Compute the gradient of the loss function using criterion.backward()
-        #           - Make backward propagation through all the layers using optimizer.backward()
-        #               and computed loss function's gradient
-        #           - Update the model parameters using optimizer.step()
-        raise NotImplementedError
+        images = batch['images']
+        targets = batch['targets']
+        predictions = self._model(images)
+        loss = self._criterion(targets, predictions)
+        if update_model:
+            self._optimizer.zero_grad()
+            gradient = self._criterion.compute_backward_gradient(
+                targets, predictions,
+            )
+            self._optimizer.compute_backward_gradient(gradient)
+            self._optimizer.step()
+        return loss, predictions
 
     def train_epoch(self):
         """Train the model on training data for one epoch.
