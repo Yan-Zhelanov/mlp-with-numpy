@@ -6,7 +6,7 @@ from configs.mlp_config import ModelConfig
 ROOT_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
-class ExperimentConfig(object):
+class ExperimentConfig:
     SEED = 0
     NUM_EPOCHS = 10
 
@@ -23,6 +23,14 @@ class ExperimentConfig(object):
     NEPTUNE_EXPERIMENT_NAME: str | None = None
     NEPTUNE_RUN_ID: str | None = None
     NEPTUNE_DEPENDENCIES_PATH = os.path.join(ROOT_DIR, 'requirements.txt')
+
+    # MLFlow parameters
+    MLFLOW_TRACKING_URI: str | None = None
+    MLFLOW_EXPERIMENT_NAME: str | None = None
+    MLFLOW_RUN_ID: int | None = None
+    MLFLOW_DATASET_VERSION: str | None = None
+    MLFLOW_DATASET_PREPROCESSING: str | None = None
+    MLFLOW_DEPENDENCIES_PATH: str | None = None
 
     # Checkpoints parameters
     CHECKPOINTS_DIR = os.path.join(
