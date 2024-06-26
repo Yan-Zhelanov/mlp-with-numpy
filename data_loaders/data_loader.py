@@ -9,8 +9,8 @@ from utils.enums import SamplerType
 
 
 class BatchType(TypedDict):
-    image: npt.NDArray[np.integer | np.float_]
-    label: npt.NDArray[np.integer]
+    images: npt.NDArray[np.integer | np.float_]
+    targets: npt.NDArray[np.integer]
 
 
 class DataType(TypedDict):
@@ -72,10 +72,12 @@ class DataLoader(object):
             BatchType: dict with labels and images.
         """
         new_batch: BatchType = {
-            'image': np.array([]),
-            'label': np.array([]),
+            'images': np.array([]),
+            'targets': np.array([]),
         }
         for data in batch:
-            new_batch['image'] = np.append(new_batch['image'], data['image'])
-            new_batch['label'] = np.append(new_batch['label'], data['label'])
+            new_batch['images'] = np.append(new_batch['images'], data['image'])
+            new_batch['targets'] = np.append(
+                new_batch['targets'], data['label'],
+            )
         return new_batch
