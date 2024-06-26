@@ -1,11 +1,12 @@
 import os
+from typing import Any
 
 from utils.enums import SamplerType, TransformsType
 
 ROOT_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
-class DataConfig(object):
+class DataConfig:
     PATH_TO_DATA = os.path.join(ROOT_DIR, 'data', 'emotion_detection')
     ANNOTATION_FILE = 'data_info.csv'
     label_mapping = {
@@ -19,12 +20,27 @@ class DataConfig(object):
     }
     sampler_type = SamplerType.DEFAULT
     train_transforms = [
-        (TransformsType.RESIZE, dict(size=(32, 32))),
-        (TransformsType.TO_FLOAT, dict()),
-        (TransformsType.NORMALIZE, dict(a=-1, b=1)),
+        (TransformsType.RESIZE, {'size': (32, 32)}),
+        (TransformsType.TO_FLOAT, {}),
+        (TransformsType.NORMALIZE, {'a': -1, 'b': 1}),
     ]
     eval_transforms = [
-        (TransformsType.RESIZE, dict(size=(32, 32))),
-        (TransformsType.TO_FLOAT, dict()),
-        (TransformsType.NORMALIZE, dict(a=-1, b=1)),
+        (TransformsType.RESIZE, {'size': (32, 32)}),
+        (TransformsType.TO_FLOAT, {}),
+        (TransformsType.NORMALIZE, {'a': -1, 'b': 1}),
     ]
+
+    def get_all_hyperparameters(self) -> dict[str, Any]:
+        """Get all hyperparameters for the model.
+
+        Returns:
+            dict[str, Any]: dictionary with all hyperparameters.
+        """
+        return {
+            'path_to_data': self.PATH_TO_DATA,
+            'annotation_file': self.ANNOTATION_FILE,
+            'label_mapping': self.label_mapping,
+            'sampler_type': self.sampler_type,
+            'train_transforms': self.train_transforms,
+            'eval_transforms': self.eval_transforms,
+        }
