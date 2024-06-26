@@ -1,5 +1,6 @@
 import os
 import pickle
+from configs.experiment_config import ExperimentConfig
 
 import numpy as np
 
@@ -19,61 +20,69 @@ from utils.metrics import get_balanced_accuracy_score
 class Trainer:
     """A class for model training."""
 
-    def __init__(self, config):
-        self.config = config
-        set_seed(self.config.seed)
-
-        self.logger = NeptuneLogger(self.config.neptune)
-        self.logger.log_hyperparameters(self.config)
-
+    def __init__(self, config: ExperimentConfig) -> None:
+        self._config = config
+        set_seed(self._config.SEED)
+        self._logger = NeptuneLogger(self._config)
+        self._logger.log_hyperparameters(
+            self._config.get_all_hyperparameters(),
+        )
         self._prepare_data()
         self._prepare_model()
 
     def _prepare_data(self):
         """Preparing training and validation data."""
-        data_cfg = self.config.data
-        batch_size = self.config.train.batch_size
-
-        train_transforms = Sequential(data_cfg.train_transforms)
-        validation_transforms = Sequential(data_cfg.eval_transforms)
-        one_hot_encoding = OneHotEncoding(data_cfg.num_classes)
-
-        self.train_dataset = EmotionsDataset(
-            data_cfg, SetType.train, transforms=train_transforms, target_transforms=one_hot_encoding,
+        data_config = self._config.DATA_CONFIG
+        batch_size = self._config.TRAIN_BATCH_SIZE
+        num_classes = self._config.DATA_NUM_CLASSES
+        train_transforms = Sequential(data_config.train_transforms)
+        validation_transforms = Sequential(data_config.eval_transforms)
+        one_hot_encoding = OneHotEncoding(num_classes)
+        self._train_dataset = EmotionsDataset(
+            data_config,
+            SetType.TRAIN,
+            transforms=train_transforms,
+            target_transforms=one_hot_encoding,
         )
-        self.train_dataloader = DataLoader(
-            self.train_dataset, batch_size, shuffle=True, sampler=data_cfg.sampler_type,
+        self._train_dataloader = DataLoader(
+            self._train_dataset,
+            batch_size,
+            shuffle=True,
+            sampler=data_config.sampler_type,
         )
-
-        self.validation_dataset = EmotionsDataset(
-            data_cfg, SetType.validation, transforms=validation_transforms, target_transforms=one_hot_encoding,
+        self._validation_dataset = EmotionsDataset(
+            data_config,
+            SetType.VALIDATION,
+            transforms=validation_transforms,
+            target_transforms=one_hot_encoding,
         )
-        self.validation_dataloader = DataLoader(
-            self.validation_dataset, batch_size=batch_size, shuffle=False,
+        self._validation_dataloader = DataLoader(
+            self._validation_dataset, batch_size=batch_size, shuffle=False,
         )
 
     def _prepare_model(self):
         """Preparing model, optimizer and loss function."""
-        self.model = MLP(self.config.model)
-        self.optimizer = SGD(
-            self.model, learning_rate=self.config.train.learning_rate,
+        self._model = MLP(self._config.MODEL_CONFIG)
+        self._optimizer = SGD(
+            self._model, learning_rate=self._config.TRAIN_LEARNING_RATE,
         )
-        self.criterion = CrossEntropyLoss()
+        self._criterion = CrossEntropyLoss()
 
     def save(self, filepath: str):
-        """Saves trained model."""
+        """Save trained model."""
         checkpoint = {
-            'model': self.model.get_params(),
+            'model': self._model.get_params(),
         }
-        os.makedirs(self.config.checkpoints_dir, exist_ok=True)
-        with open(os.path.join(self.config.checkpoints_dir, filepath), 'wb') as f:
-            pickle.dump(checkpoint, f)
+        os.makedirs(self._config.CHECKPOINTS_DIR, exist_ok=True)
+        filepath = os.path.join(self._config.CHECKPOINTS_DIR, filepath)
+        with open(filepath, 'wb') as checkpoint_file:
+            pickle.dump(checkpoint, checkpoint_file)
 
     def load(self, filepath: str):
-        """Loads trained model."""
-        with open(filepath, 'rb') as f:
-            checkpoint = pickle.load(f)
-        self.model.load_params(checkpoint['model'])
+        """Load trained model."""
+        with open(filepath, 'rb') as checkpoint_file:
+            checkpoint = pickle.load(checkpoint_file)
+        self._model.load_params(checkpoint['model'])
 
     def make_step(self, batch: dict, update_model=False):
         """This method performs one step, including forward pass, calculation of the target function, backward
@@ -102,14 +111,15 @@ class Trainer:
     def train_epoch(self):
         """Train the model on training data for one epoch.
 
-        The method goes through all train_dataloader batches and calls the self.make_step() method at each step.
+        The method goes through all train_dataloader batches and calls the
+        self.make_step() method at each step.
         """
         # TODO: Implement the training process for one epoch. For all batches in train_dataloader do:
         #       1. Make training step by calling make_step() method with update_model=True
         #       2. Get the model predictions from the outputs with argmax
         #       3. Compute metrics
         #       4. Log the value of the loss functions and metrics with logger
-        self.model.train()
+        self._model.train()
         raise NotImplementedError
 
     def fit(self):
@@ -124,7 +134,8 @@ class Trainer:
     def evaluate(self, epoch: int, dataloader: DataLoader, set_type: SetType):
         """Evaluation.
 
-        The method is used to make the model performance evaluation on training/validation/test data.
+        The method is used to make the model performance evaluation on
+        training/validation/test data.
 
         Args:
             epoch: current training epoch
@@ -137,8 +148,7 @@ class Trainer:
         #       3. Add model output to all_outputs list
         #       4. Add batch labels to all_labels list
         #    Get total loss and metrics values, log them with logger.
-        self.model.eval()
-
+        self._model.eval()
         total_loss = []
         all_outputs, all_labels = [], []
         raise NotImplementedError
@@ -146,17 +156,19 @@ class Trainer:
     def batch_overfit(self):
         """One batch overfitting.
 
-        This feature can be useful for debugging and evaluating your model's ability to learn and update its weights.
+        This feature can be useful for debugging and evaluating your model's
+        ability to learn and update its weights.
         """
-        self.model.train()
-        batch = next(iter(self.train_dataloader))
-        for _ in range(self.config.overfit.num_iterations):
+        self._model.train()
+        batch = next(iter(self._train_dataloader))
+        for _ in range(self._config.OVERFIT_NUM_ITERATIONS):
             loss_value, output = self.make_step(batch, update_model=True)
             balanced_acc = get_balanced_accuracy_score(
                 batch['target'], output.argmax(-1),
             )
-
-            self.logger.save_metrics(SetType.train.name, 'loss', loss_value)
-            self.logger.save_metrics(
-                SetType.train.name, 'balanced_acc', balanced_acc,
+            self._logger.save_metrics(
+                SetType.TRAIN.name.lower(), 'loss', loss_value,
+            )
+            self._logger.save_metrics(
+                SetType.TRAIN.name.lower(), 'balanced_acc', balanced_acc,
             )
