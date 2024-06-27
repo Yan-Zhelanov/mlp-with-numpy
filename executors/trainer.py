@@ -22,6 +22,8 @@ class Trainer:
 
     def __init__(self, config: ExperimentConfig) -> None:
         self._config = config
+        self._epoch = 0
+        self._best_balanced_accuracy: int | float = 0
         set_seed(self._config.SEED)
         self._logger = NeptuneLogger(self._config)
         self._logger.log_hyperparameters(
@@ -135,15 +137,23 @@ class Trainer:
 
     def fit(self):
         """The main model training loop."""
-        # TODO: Implement the main model training loop iterating over the epochs. At each epoch:
-        #       1. The model is first trained on the training data using the self.train_epoch() method
-        #       2. The model performance is then evaluated on the validation data with self.evaluate() method
-        #       3. (Optionally) If performance metrics on the validation data exceeds the best values achieved,
-        #               model parameters should be saved with save() method
-        raise NotImplementedError
+        for epoch in range(self._config.NUM_EPOCHS):
+            self._epoch = epoch
+            self.train_epoch()
+            balanced_accuracy = self.evaluate(
+                epoch, self._validation_dataloader, SetType.VALIDATION,
+            )
+            self._save_if_better(balanced_accuracy)
 
-    def evaluate(self, epoch: int, dataloader: DataLoader, set_type: SetType):
-        """Evaluation.
+    def _save_if_better(self, balanced_accuracy: float) -> None:
+        if balanced_accuracy > self._best_balanced_accuracy:
+            self._best_balanced_accuracy = balanced_accuracy
+            self.save(f'model_{balanced_accuracy:.3f}.pickle')
+
+    def evaluate(
+        self, epoch: int, dataloader: DataLoader, set_type: SetType,
+    ) -> np.floating:
+        """Evaluate the model.
 
         The method is used to make the model performance evaluation on
         training/validation/test data.
@@ -152,17 +162,33 @@ class Trainer:
             epoch: current training epoch
             dataloader: dataloader for the chosen set type
             set_type: set type chosen to evaluate
+
+        Returns:
+            balanced_accuracy: the balanced accuracy value.
         """
-        # TODO: To implement the model performance evaluation for each batch in the given dataloader do:
-        #       1. Make model forward pass using self.make_step(batch, update_model=False)
-        #       2. Add loss value to total_loss list
-        #       3. Add model output to all_outputs list
-        #       4. Add batch labels to all_labels list
-        #    Get total loss and metrics values, log them with logger.
         self._model.set_eval()
         total_loss = []
-        all_outputs, all_labels = [], []
-        raise NotImplementedError
+        all_labels = np.array([])
+        all_outputs = np.array([])
+        for batch in dataloader:
+            loss, output = self.make_step(batch, update_model=False)
+            total_loss.append(loss)
+            np.append(all_labels, batch['targets'])
+            np.append(all_outputs, output)
+        total_loss = np.mean(total_loss)
+        balanced_accuracy = get_balanced_accuracy_score(
+            all_labels, all_outputs.argmax(axis=-1),
+        )
+        self._logger.save_metrics(
+            set_type.name.lower(), 'loss', total_loss, step=epoch,
+        )
+        self._logger.save_metrics(
+            set_type.name.lower(),
+            'balanced_accuracy',
+            balanced_accuracy,
+            step=epoch,
+        )
+        return balanced_accuracy
 
     def batch_overfit(self):
         """One batch overfitting.
