@@ -4,7 +4,7 @@ import numpy as np
 from numpy import typing as npt
 
 from data_loaders import batch_samplers
-from dataset.emotions_dataset import EmotionsDataset
+from dataset.emotions_dataset import DataSample, EmotionsDataset
 from utils.enums import SamplerType
 
 
@@ -50,7 +50,7 @@ class DataLoader(object):
             yield self._collate_fn(batch_data)
 
     @staticmethod
-    def _collate_fn(batch: list[DataType]) -> BatchType:
+    def _collate_fn(batch: list[DataSample]) -> BatchType:
         """Combine a list of samples into a dictionary
 
         Example:
@@ -75,9 +75,11 @@ class DataLoader(object):
             'images': np.array([]),
             'targets': np.array([]),
         }
-        for data in batch:
-            new_batch['images'] = np.append(new_batch['images'], data['image'])
+        for observation in batch:
+            new_batch['images'] = np.append(
+                new_batch['images'], observation.image,
+            )
             new_batch['targets'] = np.append(
-                new_batch['targets'], data['label'],
+                new_batch['targets'], observation.target,
             )
         return new_batch
