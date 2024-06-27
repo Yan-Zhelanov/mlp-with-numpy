@@ -200,12 +200,14 @@ class Trainer:
         batch = next(iter(self._train_dataloader))
         for _ in range(self._config.OVERFIT_NUM_ITERATIONS):
             loss_value, output = self.make_step(batch, update_model=True)
-            balanced_acc = get_balanced_accuracy_score(
+            balanced_accuracy = get_balanced_accuracy_score(
                 batch['target'], output.argmax(-1),
             )
             self._logger.save_metrics(
                 SetType.TRAIN.name.lower(), 'loss', loss_value,
             )
             self._logger.save_metrics(
-                SetType.TRAIN.name.lower(), 'balanced_acc', balanced_acc,
+                SetType.TRAIN.name.lower(),
+                'balanced_accuracy',
+                balanced_accuracy,
             )
