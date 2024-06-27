@@ -22,12 +22,12 @@ class DataConfig:
     train_transforms = [
         (TransformsType.RESIZE, {'size': (32, 32)}),
         (TransformsType.TO_FLOAT, {}),
-        (TransformsType.NORMALIZE, {'a': -1, 'b': 1}),
+        (TransformsType.NORMALIZE, {'min_value': -1, 'max_value': 1}),
     ]
     eval_transforms = [
         (TransformsType.RESIZE, {'size': (32, 32)}),
         (TransformsType.TO_FLOAT, {}),
-        (TransformsType.NORMALIZE, {'a': -1, 'b': 1}),
+        (TransformsType.NORMALIZE, {'min_value': -1, 'max_value': 1}),
     ]
 
     def get_all_hyperparameters(self) -> dict[str, Any]:
