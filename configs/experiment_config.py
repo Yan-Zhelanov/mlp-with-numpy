@@ -20,7 +20,7 @@ class ExperimentConfig:
 
     # Neptune parameters
     NEPTUNE_ENV_PATH = os.path.join(ROOT_DIR, '.env')
-    NEPTUNE_PROJECT: str | None = None
+    NEPTUNE_PROJECT: str | None = 'somethingintheway/Emotions-MLP'
     NEPTUNE_EXPERIMENT_NAME: str | None = None
     NEPTUNE_RUN_ID: str | None = None
     NEPTUNE_DEPENDENCIES_PATH = os.path.join(ROOT_DIR, 'requirements.txt')
