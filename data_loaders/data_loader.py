@@ -35,7 +35,7 @@ class DataLoader(object):
         self._drop_last = drop_last
         self._num_samples = len(self._dataset)
         self._sampler = getattr(
-            batch_samplers, sampler.name + 'Sampler',
+            batch_samplers, f'{sampler.name.title()}Sampler',
         )(self._dataset, shuffle, **kwargs)
 
     def __iter__(self):
