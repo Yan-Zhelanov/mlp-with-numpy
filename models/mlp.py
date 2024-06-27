@@ -61,12 +61,12 @@ class MLP:
         """
         return self._layers
 
-    def train(self) -> None:
+    def set_train(self) -> None:
         """Set the training mode for each layer."""
         for layer in self._layers:
             layer.set_train()
 
-    def eval(self) -> None:
+    def set_eval(self) -> None:
         """Set the evaluation mode for each layer."""
         for layer in self._layers:
             layer.set_eval()

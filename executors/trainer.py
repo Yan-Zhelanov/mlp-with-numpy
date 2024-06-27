@@ -117,13 +117,21 @@ class Trainer:
         The method goes through all train_dataloader batches and calls the
         self.make_step() method at each step.
         """
-        # TODO: Implement the training process for one epoch. For all batches in train_dataloader do:
-        #       1. Make training step by calling make_step() method with update_model=True
-        #       2. Get the model predictions from the outputs with argmax
-        #       3. Compute metrics
-        #       4. Log the value of the loss functions and metrics with logger
-        self._model.train()
-        raise NotImplementedError
+        self._model.set_train()
+        for batch in self._train_dataloader:
+            loss, output = self.make_step(batch, update_model=True)
+            balanced_accuracy = get_balanced_accuracy_score(
+                batch['target'], output.argmax(axis=-1),
+            )
+            self._logger.save_metrics(
+                SetType.TRAIN.name.lower(), 'loss', loss, step=self._epoch,
+            )
+            self._logger.save_metrics(
+                SetType.TRAIN.name.lower(),
+                'balanced_accuracy',
+                balanced_accuracy,
+                step=self._epoch,
+            )
 
     def fit(self):
         """The main model training loop."""
@@ -151,7 +159,7 @@ class Trainer:
         #       3. Add model output to all_outputs list
         #       4. Add batch labels to all_labels list
         #    Get total loss and metrics values, log them with logger.
-        self._model.eval()
+        self._model.set_eval()
         total_loss = []
         all_outputs, all_labels = [], []
         raise NotImplementedError
@@ -162,7 +170,7 @@ class Trainer:
         This feature can be useful for debugging and evaluating your model's
         ability to learn and update its weights.
         """
-        self._model.train()
+        self._model.set_train()
         batch = next(iter(self._train_dataloader))
         for _ in range(self._config.OVERFIT_NUM_ITERATIONS):
             loss_value, output = self.make_step(batch, update_model=True)
