@@ -4,6 +4,7 @@ from typing import List, Union
 
 import mlflow
 import neptune
+import numpy as np
 from dotenv import load_dotenv
 
 from configs.experiment_config import ExperimentConfig
@@ -56,10 +57,10 @@ class NeptuneLogger(BaseLogger):
 
     def save_metrics(
         self,
-        type_set,
-        metric_name: Union[List[str], str],
-        metric_value: Union[List[float], float],
-        step=None,
+        type_set: str,
+        metric_name: list[str] | str,
+        metric_value: list[float] | float | np.floating,
+        step: int | None = None,
     ) -> None:
         if isinstance(metric_name, list) ^ isinstance(metric_value, list):
             raise ValueError(
