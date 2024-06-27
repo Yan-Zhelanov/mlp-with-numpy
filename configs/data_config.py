@@ -7,7 +7,7 @@ ROOT_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
 class DataConfig:
-    PATH_TO_DATA = os.path.join(ROOT_DIR, 'data', 'emotion_detection')
+    PATH_TO_DATA = os.path.join(ROOT_DIR, 'data')
     ANNOTATION_FILE = 'data_info.csv'
     label_mapping = {
         'angry': 0,
