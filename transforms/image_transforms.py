@@ -112,9 +112,10 @@ class Sequential(ImageTransform):
         self, transform_list: list[tuple[TransformsType, dict]],
     ) -> None:
         self._transforms: list[ImageTransform] = [
-            getattr(sys.modules[__name__], transform.name.lower())(
-                **transform_kwargs,
-            )
+            getattr(
+                sys.modules[__name__],
+                transform.name.title().replace('_', ''),
+            )(**transform_kwargs)
             for transform, transform_kwargs in transform_list
         ]
 
