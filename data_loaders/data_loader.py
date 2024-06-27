@@ -71,15 +71,14 @@ class DataLoader(object):
         Returns:
             BatchType: dict with labels and images.
         """
-        new_batch: BatchType = {
-            'images': np.array([]),
-            'targets': np.array([]),
+        new_batch: dict[str, list] = {
+            'images': [],
+            'targets': [],
         }
         for observation in batch:
-            new_batch['images'] = np.append(
-                new_batch['images'], observation.image,
-            )
-            new_batch['targets'] = np.append(
-                new_batch['targets'], observation.target,
-            )
-        return new_batch
+            new_batch['images'].append(observation.image)
+            new_batch['targets'].append(observation.target)
+        return {
+            'images': np.array(new_batch['images']),
+            'targets': np.array(new_batch['targets']),
+        }
