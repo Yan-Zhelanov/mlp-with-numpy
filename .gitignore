@@ -5,6 +5,7 @@ __pycache__/
 venv/
 data/
 .neptune/
+checkpoints/
 
 .env*
 !.env.example
