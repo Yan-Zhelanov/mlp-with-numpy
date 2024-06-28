@@ -101,7 +101,7 @@ class Trainer:
             output: model output (batch_size x num_classes)
         """
         images = batch['images']
-        targets = batch['targets']
+        targets = batch['ohe_targets']
         predictions = self._model(images)
         loss = self._criterion(targets, predictions)
         if update_model:
@@ -123,7 +123,7 @@ class Trainer:
         for batch in self._train_dataloader:
             loss, output = self.make_step(batch, update_model=True)
             balanced_accuracy = get_balanced_accuracy_score(
-                batch['target'], output.argmax(axis=-1),
+                batch['targets'], output.argmax(axis=-1),
             )
             self._logger.save_metrics(
                 SetType.TRAIN.name.lower(), 'loss', loss, step=self._epoch,
@@ -169,12 +169,12 @@ class Trainer:
         self._model.set_eval()
         total_loss = []
         all_labels = np.array([])
-        all_outputs = np.array([])
+        all_outputs = np.array([]).reshape((0, self._config.DATA_NUM_CLASSES))
         for batch in dataloader:
             loss, output = self.make_step(batch, update_model=False)
             total_loss.append(loss)
-            np.append(all_labels, batch['targets'])
-            np.append(all_outputs, output)
+            all_labels = np.concatenate((all_labels, batch['targets']))
+            all_outputs = np.concatenate((all_outputs, output))
         total_loss = np.mean(total_loss)
         balanced_accuracy = get_balanced_accuracy_score(
             all_labels, all_outputs.argmax(axis=-1),
@@ -201,7 +201,7 @@ class Trainer:
         for _ in range(self._config.OVERFIT_NUM_ITERATIONS):
             loss_value, output = self.make_step(batch, update_model=True)
             balanced_accuracy = get_balanced_accuracy_score(
-                batch['target'], output.argmax(-1),
+                batch['targets'], output.argmax(-1),
             )
             self._logger.save_metrics(
                 SetType.TRAIN.name.lower(), 'loss', loss_value,
