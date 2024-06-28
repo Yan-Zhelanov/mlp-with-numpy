@@ -53,7 +53,9 @@ class CrossEntropyLoss:
         logits -= max_logit
         exp_logits = np.exp(logits)
         sum_exp_logits = np.log(np.sum(exp_logits, axis=1, keepdims=True))
-        return np.mean(targets * (sum_exp_logits - logits))
+        return np.mean(
+            targets * np.sum((sum_exp_logits - logits), axis=1, keepdims=True),
+        )
 
     def compute_backward_gradient(
         self,
