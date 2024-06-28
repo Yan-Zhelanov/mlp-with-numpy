@@ -9,12 +9,13 @@ from utils.enums import SamplerType
 
 
 class BatchType(TypedDict):
-    images: npt.NDArray[np.integer | np.float_]
+    images: npt.NDArray[np.integer | np.floating]
     targets: npt.NDArray[np.integer]
+    ohe_targets: npt.NDArray[np.integer | np.floating]
 
 
 class DataType(TypedDict):
-    image: npt.NDArray[np.integer | np.float_]
+    image: npt.NDArray[np.integer | np.floating]
     label: int
 
 
@@ -51,7 +52,7 @@ class DataLoader(object):
 
     @staticmethod
     def _collate_fn(batch: list[DataSample]) -> BatchType:
-        """Combine a list of samples into a dictionary
+        """Combine a list of samples into a dictionary.
 
         Example:
             batch = [
@@ -74,11 +75,14 @@ class DataLoader(object):
         new_batch: dict[str, list] = {
             'images': [],
             'targets': [],
+            'ohe_targets': [],
         }
         for observation in batch:
             new_batch['images'].append(observation.image)
             new_batch['targets'].append(observation.target)
+            new_batch['ohe_targets'].append(observation.ohe_target)
         return {
             'images': np.array(new_batch['images']),
             'targets': np.array(new_batch['targets']),
+            'ohe_targets': np.array(new_batch['ohe_targets']),
         }
