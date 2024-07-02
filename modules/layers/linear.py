@@ -16,9 +16,9 @@ class Linear(BaseLayer):
         """
         super().__init__(['weights', 'bias'])
         self.weights = np.zeros((output_shape, input_shape))
-        self.weights_gradient: npt.NDArray[np.floating] | None = None
+        self.gradient_weights: npt.NDArray[np.floating] | None = None
         self.bias = np.zeros(output_shape)
-        self.bias_gradient: npt.NDArray[np.floating] | None = None
+        self.gradient_bias: npt.NDArray[np.floating] | None = None
         self._input_shape = input_shape
         self._output_shape = output_shape
 
@@ -75,6 +75,6 @@ class Linear(BaseLayer):
         """
         if self._inputs_cache is None:
             raise RuntimeError('Layer is not in training mode!')
-        self.bias_gradient = np.sum(gradient, axis=0)
-        self.weights_gradient = gradient.T @ self._inputs_cache
+        self.gradient_bias = np.sum(gradient, axis=0)
+        self.gradient_weights = gradient.T @ self._inputs_cache
         return gradient @ self.weights

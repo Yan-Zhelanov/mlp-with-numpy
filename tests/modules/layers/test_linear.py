@@ -28,5 +28,5 @@ def test_linear_compute_gradient():
     )
 
     assert (result == expected_result).all()
-    assert (linear.weights_gradient == expected_weights_gradient).all()
-    assert (linear.bias_gradient == expected_bias_gradient).all()
+    assert (linear.gradient_weights == expected_weights_gradient).all()
+    assert (linear.gradient_bias == expected_bias_gradient).all()
