@@ -5,7 +5,7 @@ if __name__ == '__main__':
     trainer = Trainer(ExperimentConfig())
 
     # one batch overfitting
-    trainer.batch_overfit()
+    # trainer.batch_overfit()
 
     # model training
-    # trainer.fit()
+    trainer.fit()
