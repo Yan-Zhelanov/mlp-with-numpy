@@ -140,6 +140,7 @@ class Trainer:
         for epoch in range(self._config.NUM_EPOCHS):
             self._epoch = epoch
             self.train_epoch()
+            self.evaluate(epoch, self._train_dataloader, SetType.TRAIN)
             balanced_accuracy = self.evaluate(
                 epoch, self._validation_dataloader, SetType.VALIDATION,
             )
