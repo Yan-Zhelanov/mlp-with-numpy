@@ -17,7 +17,7 @@ class ModelConfig:
 
     # Weights and bias initialization
     INIT_TYPE = WeightsInitType.NORMAL
-    INIT_KWARGS = {'mu': 0, 'sigma': 0.001}
+    INIT_KWARGS = {'mu': 0, 'sigma': 0.01}
     ZERO_BIAS = True
 
     def get_all_hyperparameters(self) -> dict[str, Any]:
