@@ -9,11 +9,11 @@ ROOT_DIR = os.path.dirname(os.path.dirname(__file__))
 
 class ExperimentConfig:
     SEED = 0
-    NUM_EPOCHS = 10
+    NUM_EPOCHS = 100
 
     # Train parameters
     TRAIN_BATCH_SIZE = 64
-    TRAIN_LEARNING_RATE = 5e-2
+    TRAIN_LEARNING_RATE = 0.001
 
     # Overfit parameters
     OVERFIT_NUM_ITERATIONS = 500
