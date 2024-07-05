@@ -14,7 +14,7 @@ from utils.enums import SetType
 
 @dataclass(frozen=True)
 class DataSample(object):
-    image: npt.NDArray[np.integer | np.float_]
+    image: npt.NDArray[np.integer | np.floating]
     target: int
     ohe_target: TargetsType | None
     path: str
@@ -79,7 +79,7 @@ class EmotionsDataset(object):
             DataSample: A dataclass with the image, target, one-hot encoded
                 target, and image path.
         """
-        image: npt.NDArray[np.integer | np.float_] = cv2.imread(
+        image: npt.NDArray[np.integer | np.floating] = cv2.imread(
             self._paths[index], cv2.IMREAD_GRAYSCALE,
         )
         target = -1
