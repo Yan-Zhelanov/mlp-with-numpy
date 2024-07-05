@@ -11,6 +11,7 @@ from modules.layers.activations import (  # noqa: F401
     Tanh,
 )
 from modules.layers.base import BaseLayer
+from modules.layers.dropout import Dropout  # noqa: F401
 from modules.layers.linear import Linear  # noqa: F401
 from modules.utils.parameter_initialization import ParameterInitializator
 
