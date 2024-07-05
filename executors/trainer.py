@@ -169,16 +169,17 @@ class Trainer:
         """
         self._model.set_eval()
         total_loss = []
-        all_labels = np.array([])
-        all_outputs = np.array([]).reshape((0, self._config.DATA_NUM_CLASSES))
+        all_labels = []
+        all_outputs = []
         for batch in dataloader:
             loss, output = self.make_step(batch, update_model=False)
             total_loss.append(loss)
-            all_labels = np.concatenate((all_labels, batch['targets']))
-            all_outputs = np.concatenate((all_outputs, output))
+            all_labels.append(batch['targets'])
+            all_outputs.append(output)
         total_loss = np.mean(total_loss)
+        all_predictions = np.concatenate(all_outputs).argmax(axis=-1)
         balanced_accuracy = get_balanced_accuracy_score(
-            all_labels, all_outputs.argmax(axis=-1),
+            np.concatenate(all_labels), all_predictions,
         )
         self._logger.save_metrics(
             set_type.name.lower(), 'loss', total_loss, step=epoch,
