@@ -16,7 +16,7 @@ class ModelConfig:
     ]
 
     # Weights and bias initialization
-    INIT_TYPE = WeightsInitType.NORMAL
+    INIT_TYPE = WeightsInitType.XAVIER_NORMALIZED
     INIT_KWARGS = {'mu': 0, 'sigma': 0.01}
     ZERO_BIAS = True
 
