@@ -12,6 +12,7 @@ class BatchType(TypedDict):
     images: npt.NDArray[np.integer | np.floating]
     targets: npt.NDArray[np.integer]
     ohe_targets: npt.NDArray[np.integer | np.floating]
+    paths: npt.NDArray[np.str_]
 
 
 class DataType(TypedDict):
@@ -76,13 +77,16 @@ class DataLoader(object):
             'images': [],
             'targets': [],
             'ohe_targets': [],
+            'paths': [],
         }
         for observation in batch:
             new_batch['images'].append(observation.image)
             new_batch['targets'].append(observation.target)
             new_batch['ohe_targets'].append(observation.ohe_target)
+            new_batch['paths'].append(observation.path)
         return {
             'images': np.array(new_batch['images']),
             'targets': np.array(new_batch['targets']),
             'ohe_targets': np.array(new_batch['ohe_targets']),
+            'paths': np.array(new_batch['paths']),
         }
