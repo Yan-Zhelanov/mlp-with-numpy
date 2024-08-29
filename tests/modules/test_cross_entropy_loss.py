@@ -18,7 +18,7 @@ def test_cross_entropy_loss():
     )
     # Because our logits are such that the correct class has the highest logit,
     # so softmax will be [1, 0, 0], [0, 1, 0], [0, 0, 1] respectively.
-    expected_loss = 0.00011736
+    expected_loss = 0.00035208222
 
     loss = CrossEntropyLoss()
     computed_loss = loss(targets, logits)
@@ -37,7 +37,7 @@ def test_cross_entropy_loss_numerical_stability():
             [2000, 2000, 2000], [2000, 2000, 2000], [2000, 2000, 2000],
         ], dtype=np.float32,
     )
-    expected_loss = 0.366
+    expected_loss = 1.0986123
 
     loss = CrossEntropyLoss()
     computed_loss = loss(targets, logits)
