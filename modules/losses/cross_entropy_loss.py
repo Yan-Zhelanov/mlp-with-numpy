@@ -54,7 +54,7 @@ class CrossEntropyLoss:
         exp_logits = np.exp(logits)
         sum_exp_logits = np.log(np.sum(exp_logits, axis=1, keepdims=True))
         return np.mean(
-            targets * np.sum((sum_exp_logits - logits), axis=1, keepdims=True),
+            np.sum(targets * (sum_exp_logits - logits), axis=1, keepdims=True),
         )
 
     def compute_backward_gradient(
