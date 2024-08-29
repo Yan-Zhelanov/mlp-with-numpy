@@ -82,7 +82,9 @@ class Trainer:
 
     def load(self, filepath: str):
         """Load trained model."""
-        with open(filepath, 'rb') as checkpoint_file:
+        with open(
+            os.path.join(self._config.CHECKPOINTS_DIR, filepath), 'rb',
+        ) as checkpoint_file:
             checkpoint = pickle.load(checkpoint_file)
         self._model.load_params(checkpoint['model'])
 
