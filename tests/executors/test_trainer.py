@@ -32,6 +32,7 @@ def test_make_step_forward_pass(trainer: Trainer):
     batch: BatchType = {
         'images': np.random.rand(32, 3, 224, 224),
         'targets': np.random.randint(0, 10, size=(32,)),
+        'ohe_targets': np.random.rand(32, 10),
     }
     trainer._model.return_value = np.random.rand(32, 10)
     trainer._criterion.return_value = 1.0
@@ -39,7 +40,9 @@ def test_make_step_forward_pass(trainer: Trainer):
     loss, predictions = trainer.make_step(batch, update_model=False)
 
     trainer._model.assert_called_once_with(batch['images'])
-    trainer._criterion.assert_called_once_with(batch['targets'], predictions)
+    trainer._criterion.assert_called_once_with(
+        batch['ohe_targets'], predictions,
+    )
     assert loss == pytest.approx(1.0)
     assert predictions.shape == (32, 10)
 
@@ -49,6 +52,7 @@ def test_make_step_backward_pass(trainer: Trainer):
     batch: BatchType = {
         'images': np.random.rand(32, 3, 224, 224),
         'targets': np.random.randint(0, 10, size=(32,)),
+        'ohe_targets': np.random.rand(32, 10),
     }
     trainer._model.return_value = np.random.rand(32, 10)
     trainer._criterion.return_value = 1.0
@@ -59,10 +63,12 @@ def test_make_step_backward_pass(trainer: Trainer):
     loss, predictions = trainer.make_step(batch, update_model=True)
 
     trainer._model.assert_called_once_with(batch['images'])
-    trainer._criterion.assert_called_once_with(batch['targets'], predictions)
+    trainer._criterion.assert_called_once_with(
+        batch['ohe_targets'], predictions,
+    )
     trainer._optimizer.zero_grad.assert_called_once()
     trainer._criterion.compute_backward_gradient.assert_called_once_with(
-        batch['targets'], predictions,
+        batch['ohe_targets'], predictions,
     )
     trainer._optimizer.compute_backward_gradient.assert_called_once_with(
         trainer._criterion.compute_backward_gradient.return_value,
