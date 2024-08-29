@@ -8,11 +8,22 @@ _INPUT_SHAPE = _IMAGE_SIZE * _IMAGE_SIZE
 
 class ModelConfig:
     LAYERS = [
-        ('Linear', {'input_shape': _INPUT_SHAPE, 'output_shape': 128}),
+        ('Linear', {'input_shape': _INPUT_SHAPE, 'output_shape': 512}),
         ('ReLU', {}),
+        ('Dropout', {'keeping_probability': 0.8}),
+        ('Linear', {'input_shape': 512, 'output_shape': 256}),
+        ('ReLU', {}),
+        ('Dropout', {'keeping_probability': 0.8}),
+        ('Linear', {'input_shape': 256, 'output_shape': 128}),
+        ('ReLU', {}),
+        ('Dropout', {'keeping_probability': 0.8}),
         ('Linear', {'input_shape': 128, 'output_shape': 64}),
         ('ReLU', {}),
-        ('Linear', {'input_shape': 64, 'output_shape': 7}),
+        ('Dropout', {'keeping_probability': 0.8}),
+        ('Linear', {'input_shape': 64, 'output_shape': 32}),
+        ('ReLU', {}),
+        ('Dropout', {'keeping_probability': 0.8}),
+        ('Linear', {'input_shape': 32, 'output_shape': 7}),
     ]
 
     # Weights and bias initialization
