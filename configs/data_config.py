@@ -24,7 +24,7 @@ class DataConfig:
         (TransformsType.TO_FLOAT, {}),
         (TransformsType.NORMALIZE, {'min_value': -1, 'max_value': 1}),
     ]
-    eval_transforms = [
+    eval_transforms: list[tuple[TransformsType, dict]] = [
         (TransformsType.RESIZE, {'size': (32, 32)}),
         (TransformsType.TO_FLOAT, {}),
         (TransformsType.NORMALIZE, {'min_value': -1, 'max_value': 1}),
