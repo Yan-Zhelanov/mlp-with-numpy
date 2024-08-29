@@ -2,6 +2,7 @@ import os
 import pickle
 
 import numpy as np
+from numpy import typing as npt
 
 from configs.experiment_config import ExperimentConfig
 from data_loaders.data_loader import BatchType, DataLoader
@@ -215,3 +216,26 @@ class Trainer:
                 'balanced_accuracy',
                 balanced_accuracy,
             )
+
+    def predict(
+        self, dataloader: DataLoader,
+    ) -> tuple[npt.NDArray[np.integer], npt.NDArray[np.str_]]:
+        """Predict the outputs.
+
+        Args:
+            dataloader: dataloader for the chosen set type.
+
+        Returns:
+            tuple: predictions and paths.
+        """
+        self._model.set_eval()
+        all_predictions = []
+        all_paths = []
+        for batch in dataloader:
+            predictions = self._model(batch['images'])
+            all_predictions.append(predictions)
+            all_paths.append(batch['paths'])
+        return (
+            np.concatenate(all_predictions).argmax(axis=-1),
+            np.concatenate(all_paths),
+        )
